@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from '@/config/axios';
+import axios from '@/config/axios-customize';
 
 // First, create the thunk
 export const fetchAccount = createAsyncThunk(
     'account/fetchAccount',
     async () => {
         const response = await axios.get('/api/v1/auth/account')
-        return response.data
+        return response.data;
     }
 )
 
