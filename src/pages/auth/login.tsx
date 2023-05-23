@@ -1,7 +1,7 @@
 import { Button, Divider, Form, Input, message, notification } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { callLogin } from 'config/api';
-import './login.scss';
+// import './login.scss';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUserLoginInfo } from '@/redux/slice/accountSlide';

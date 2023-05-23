@@ -1,25 +1,20 @@
-:root {
-    --color-white: #ffffff;
-    --color-light: #f1f5f9;
-    --color-black: #121212;
-    --color-night: #001632;
+$color-white: #ffffff;
+$color-light: #f1f5f9;
+$color-black: #121212;
+$color-night: #001632;
 
-    --color-red: #f44336;
-    --color-blue: #1a73e8;
-    --color-gray: #80868b;
-    --color-grayish: #dadce0;
+$color-red: #f44336;
+$color-blue: #1a73e8;
+$color-gray: #80868b;
+$color-grayish: #dadce0;
 
-    --shadow-normal: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
-        0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
+$shadow-normal: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
 .login-page {
-    color: var(--color-black);
-    background: var(--color-light);
+    color: $color-black;
+    background: $color-light;
 
 
     // Components
@@ -44,19 +39,19 @@
         &-large {
             font-size: 2rem;
             font-weight: 600;
-            color: var(--color-black);
+            color: $color-black;
         }
 
         &-normal {
             font-size: 1rem;
             font-weight: 400;
-            color: var(--color-black);
+            color: $color-black;
         }
 
         &-links {
             font-size: 1rem;
             font-weight: 400;
-            color: var(--color-blue);
+            color: $color-blue;
 
             &:hover {
                 text-decoration: underline;
@@ -74,9 +69,9 @@
             border: none;
             outline: none;
             border-radius: 0.5rem;
-            color: var(--color-black);
-            background: var(--color-white);
-            box-shadow: var(--shadow-large);
+            color: $color-black;
+            background: $color-white;
+            box-shadow: $shadow-large;
 
             .form {
                 width: 100%;
@@ -101,8 +96,8 @@
                     border: none;
                     outline: none;
                     border-radius: 2rem;
-                    color: var(--color-black);
-                    background: var(--color-light);
+                    color: $color-black;
+                    background: $color-light;
                     text-transform: unset;
                     text-rendering: optimizeLegibility;
                 }
@@ -119,9 +114,9 @@
                     border: none;
                     outline: none;
                     border-radius: 2rem;
-                    color: var(--color-white);
-                    background: var(--color-blue);
-                    box-shadow: var(--shadow-medium);
+                    color: $color-white;
+                    background: $color-blue;
+                    box-shadow: $shadow-medium;
                     text-transform: capitalize;
                     text-rendering: optimizeLegibility;
                 }
@@ -140,7 +135,7 @@
                     border: none;
                     outline: none;
                     height: 2px;
-                    background: var(--color-grayish);
+                    background: $color-grayish;
                 }
 
                 &-text {
@@ -148,7 +143,7 @@
                     font-size: 1rem;
                     font-weight: 500;
                     line-height: inherit;
-                    color: var(--color-black);
+                    color: $color-black;
                     margin: 0 1rem;
                 }
             }
@@ -170,16 +165,16 @@
                     height: auto;
                     padding: 0.35rem 1.25rem;
                     outline: none;
-                    border: 2px solid var(--color-grayish);
+                    border: 2px solid $color-grayish;
                     border-radius: 2rem;
-                    color: var(--color-black);
-                    background: var(--color-white);
+                    color: $color-black;
+                    background: $color-white;
                     text-transform: capitalize;
                     text-rendering: optimizeLegibility;
                     transition: all 0.35s ease;
 
                     &:hover {
-                        background: var(--color-light);
+                        background: $color-light;
                     }
                 }
             }

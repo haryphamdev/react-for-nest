@@ -2,7 +2,7 @@ import { Button, Divider, Form, Input, message, notification } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { callRegister } from 'config/api';
-import './register.scss';
+// import './register.scss';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -28,15 +28,16 @@ const RegisterPage = () => {
 
 
     return (
-        <div className="register-page">
-            <main className="main">
-                <div className="container">
-                    <section className="wrapper">
-                        <div className="heading">
-                            <h2 className="text text-large">Đăng Ký Tài Khoản</h2>
-                            <Divider />
+        <div className="register-page" >
+
+            <main className="main" >
+                <div className="container" >
+                    <section className="wrapper" >
+                        <div className="heading" >
+                            <h2 className="text text-large" > Đăng Ký Tài Khoản </h2>
+                            < Divider />
                         </div>
-                        <Form
+                        < Form
                             name="basic"
                             // style={{ maxWidth: 600, margin: '0 auto' }}
                             onFinish={onFinish}
@@ -53,7 +54,8 @@ const RegisterPage = () => {
 
 
                             <Form.Item
-                                labelCol={{ span: 24 }} //whole column
+                                labelCol={{ span: 24 }
+                                } //whole column
                                 label="Email"
                                 name="email"
                                 rules={[{ required: true, message: 'Email không được để trống!' }]}
@@ -78,15 +80,15 @@ const RegisterPage = () => {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item
+                            < Form.Item
                             // wrapperCol={{ offset: 6, span: 16 }}
                             >
-                                <Button type="primary" htmlType="submit" loading={isSubmit}>
+                                <Button type="primary" htmlType="submit" loading={isSubmit} >
                                     Đăng ký
                                 </Button>
                             </Form.Item>
-                            <Divider>Or</Divider>
-                            <p className="text text-normal">Đã có tài khoản ?
+                            <Divider> Or </Divider>
+                            <p className="text text-normal" > Đã có tài khoản ?
                                 <span>
                                     <Link to='/login' > Đăng Nhập </Link>
                                 </span>
