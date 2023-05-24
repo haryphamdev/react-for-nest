@@ -2,7 +2,8 @@ import { Button, Divider, Form, Input, message, notification } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { callRegister } from 'config/api';
-// import './register.scss';
+import styles from 'styles/auth.module.scss';
+
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -28,13 +29,13 @@ const RegisterPage = () => {
 
 
     return (
-        <div className="register-page" >
+        <div className={styles["register-page"]} >
 
-            <main className="main" >
-                <div className="container" >
-                    <section className="wrapper" >
-                        <div className="heading" >
-                            <h2 className="text text-large" > Đăng Ký Tài Khoản </h2>
+            <main className={styles.main} >
+                <div className={styles.container} >
+                    <section className={styles.wrapper} >
+                        <div className={styles.heading} >
+                            <h2 className={`${styles.text} ${styles["text-large"]}`}> Đăng Ký Tài Khoản </h2>
                             < Divider />
                         </div>
                         < Form

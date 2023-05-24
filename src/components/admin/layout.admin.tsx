@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import {
     AppstoreOutlined,
     ExceptionOutlined,
-    HeartTwoTone,
-    TeamOutlined,
+    ApiOutlined,
     UserOutlined,
-    DollarCircleOutlined,
+    BankOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    DownOutlined,
+    AliwangwangOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useNavigate } from "react-router-dom";
@@ -48,20 +47,28 @@ const LayoutAdmin = () => {
             icon: React.createElement(AppstoreOutlined)
         },
         {
-            label: <span>Manage Users</span>,
-            key: 'user',
-            icon: React.createElement(UserOutlined),
-            children: [
-                {
-                    label: <Link to='/admin/user'>CRUD</Link>,
-                    key: 'crud',
-                    icon: React.createElement(TeamOutlined),
-                },
-            ]
+            label: <Link to='/admin/company'>Company</Link>,
+            key: 'company',
+            icon: React.createElement(BankOutlined),
         },
         {
-            label: <Link to='/admin/book'>Manage Books</Link>,
-            key: 'book',
+            label: <Link to='/admin/user'>User</Link>,
+            key: 'user',
+            icon: React.createElement(UserOutlined)
+        },
+        {
+            label: <Link to='/admin/resume'>Resume</Link>,
+            key: 'resume',
+            icon: React.createElement(AliwangwangOutlined)
+        },
+        {
+            label: <Link to='/admin/permission'>Permission</Link>,
+            key: 'permission',
+            icon: React.createElement(ApiOutlined)
+        },
+        {
+            label: <Link to='/admin/role'>Role</Link>,
+            key: 'role',
             icon: React.createElement(ExceptionOutlined)
         },
 

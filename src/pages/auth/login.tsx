@@ -1,10 +1,10 @@
 import { Button, Divider, Form, Input, message, notification } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { callLogin } from 'config/api';
-// import './login.scss';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setUserLoginInfo } from '@/redux/slice/accountSlide';
+import styles from 'styles/auth.module.scss';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -35,12 +35,12 @@ const LoginPage = () => {
 
 
     return (
-        <div className="login-page">
-            <main className="main">
-                <div className="container">
-                    <section className="wrapper">
-                        <div className="heading">
-                            <h2 className="text text-large">Đăng Nhập</h2>
+        <div className={styles["login-page"]}>
+            <main className={styles.main}>
+                <div className={styles.container}>
+                    <section className={styles.wrapper}>
+                        <div className={styles.heading}>
+                            <h2 className={`${styles.text} ${styles["text-large"]}`}>Đăng Nhập</h2>
                             <Divider />
 
                         </div>

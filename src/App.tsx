@@ -15,7 +15,13 @@ import ProtectedRoute from 'components/share/protected-route.ts';
 import Header from 'components/client/header.client';
 import Footer from 'components/client/footer.client';
 import HomePage from 'pages/home';
-
+import 'styles/app.module.scss';
+import DashboardPage from './pages/admin/dashboard';
+import CompanyPage from './pages/admin/company';
+import PermissionPage from './pages/admin/permission';
+import ResumePage from './pages/admin/resume';
+import RolePage from './pages/admin/role';
+import UserPage from './pages/admin/user';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -67,20 +73,48 @@ export default function App() {
       element: <LayoutAdmin />,
       errorElement: <NotFound />,
       children: [
-        // {
-        //   index: true, element:
-        //     <ProtectedRoute>
-        //       <AdminPage />
-        //     </ProtectedRoute>
-        // },
-        // {
-        //   path: "user",
-        //   element:
-        //     <ProtectedRoute>
-        //       <ManageUserPage />
-        //     </ProtectedRoute>
-        //   ,
-        // },
+        {
+          index: true, element:
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "company",
+          element:
+            <ProtectedRoute>
+              <CompanyPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "user",
+          element:
+            <ProtectedRoute>
+              <UserPage />
+            </ProtectedRoute>
+        },
+
+        {
+          path: "resume",
+          element:
+            <ProtectedRoute>
+              <ResumePage />
+            </ProtectedRoute>
+        },
+        {
+          path: "permission",
+          element:
+            <ProtectedRoute>
+              <PermissionPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "role",
+          element:
+            <ProtectedRoute>
+              <RolePage />
+            </ProtectedRoute>
+        }
       ],
     },
 
@@ -99,15 +133,14 @@ export default function App() {
   return (
     <>
       {
-        isLoading === false
-          || window.location.pathname === '/login'
-          || window.location.pathname === '/register'
-          || window.location.pathname === '/'
-          || window.location.pathname.startsWith('/book')
-          ?
-          <RouterProvider router={router} />
-          :
-          <Loading />
+        // isLoading === false
+        //   || window.location.pathname === '/login'
+        //   || window.location.pathname === '/register'
+        //   || window.location.pathname === '/'
+        //   ?
+        <RouterProvider router={router} />
+        // :
+        // <Loading />
       }
     </>
   )

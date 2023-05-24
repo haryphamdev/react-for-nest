@@ -11,14 +11,17 @@ export const fetchAccount = createAsyncThunk(
 )
 
 const initialState = {
-    isAuthenticated: false,
+    // isAuthenticated: false,
+    isAuthenticated: true,
+
     isLoading: true,
     user: {
         userId: "",
         email: "",
         phone: "",
         _id: "",
-        role: "",
+        // role: "",
+        role: "ADMIN",
     },
     activeMenu: 'home'
 };
