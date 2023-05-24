@@ -44,32 +44,32 @@ const LayoutAdmin = () => {
         {
             label: <Link to='/admin'>Dashboard</Link>,
             key: 'dashboard',
-            icon: React.createElement(AppstoreOutlined)
+            icon: <AppstoreOutlined />
         },
         {
             label: <Link to='/admin/company'>Company</Link>,
             key: 'company',
-            icon: React.createElement(BankOutlined),
+            icon: <BankOutlined />,
         },
         {
             label: <Link to='/admin/user'>User</Link>,
             key: 'user',
-            icon: React.createElement(UserOutlined)
+            icon: <UserOutlined />
         },
         {
             label: <Link to='/admin/resume'>Resume</Link>,
             key: 'resume',
-            icon: React.createElement(AliwangwangOutlined)
+            icon: <AliwangwangOutlined />
         },
         {
             label: <Link to='/admin/permission'>Permission</Link>,
             key: 'permission',
-            icon: React.createElement(ApiOutlined)
+            icon: <ApiOutlined />
         },
         {
             label: <Link to='/admin/role'>Role</Link>,
             key: 'role',
-            icon: React.createElement(ExceptionOutlined)
+            icon: <ExceptionOutlined />
         },
 
     ];
