@@ -15,3 +15,8 @@ export const callFetchAccount = () => {
 export const callLogout = () => {
     return axios.post('/api/v1/auth/logout')
 }
+
+
+export const callCreateCompany = (name: string, address: string, description: string) => {
+    return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, description })
+}

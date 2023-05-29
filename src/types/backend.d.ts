@@ -12,3 +12,10 @@ interface IUser {
     email: string;
     phone: string
 }
+
+interface ICompany {
+    _id?: string;
+    name?: string;
+    address?: string;
+    description?: string
+}

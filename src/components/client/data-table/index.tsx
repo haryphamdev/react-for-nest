@@ -3,8 +3,6 @@ import {
     ProTable,
     ProTableProps,
 } from '@ant-design/pro-components';
-//   import { getLocale } from '@umijs/max';
-// import styles from './styles.module.scss';
 import vi_VN from 'antd/locale/vi_VN';
 import enUS from 'antd/lib/locale/en_US';
 import { ConfigProvider } from 'antd';
@@ -18,7 +16,6 @@ const DataTable = <
     defaultData = [],
     dataSource,
     postData,
-    // locale = getLocale(),
     pagination,
     // sticky = { offsetHeader: 50 },
     loading,
@@ -37,7 +34,6 @@ const DataTable = <
     return (
         <ConfigProvider locale={vi_VN}>
             <ProTable<T, U, ValueType>
-                // className={styles.table}
                 columns={columns}
                 defaultData={defaultData}
                 dataSource={dataSource}

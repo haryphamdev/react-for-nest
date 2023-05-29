@@ -15,6 +15,8 @@ import { Link } from 'react-router-dom';
 import { callLogout } from 'config/api';
 // import { doLogoutAction } from '@/redux/account/accountSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { isMobile } from 'react-device-detect';
+
 import type { MenuProps } from 'antd';
 
 const { Content, Footer, Sider } = Layout;
@@ -104,40 +106,53 @@ const LayoutAdmin = () => {
                 style={{ minHeight: '100vh' }}
                 className="layout-admin"
             >
-                <Sider
-                    theme='light'
-                    collapsible
-                    collapsed={collapsed}
-                    onCollapse={(value) => setCollapsed(value)}>
-                    <div style={{ height: 32, margin: 16, textAlign: 'center' }}>
-                        Admin
-                    </div>
+                {!isMobile ?
+                    <Sider
+                        theme='light'
+                        collapsible
+                        collapsed={collapsed}
+                        onCollapse={(value) => setCollapsed(value)}>
+                        <div style={{ height: 32, margin: 16, textAlign: 'center' }}>
+                            Admin
+                        </div>
+                        <Menu
+                            defaultSelectedKeys={[activeMenu]}
+                            mode="inline"
+                            items={items}
+                            onClick={(e) => setActiveMenu(e.key)}
+                        />
+                    </Sider>
+                    :
                     <Menu
                         defaultSelectedKeys={[activeMenu]}
-                        mode="inline"
                         items={items}
                         onClick={(e) => setActiveMenu(e.key)}
+                        mode="horizontal"
                     />
-                </Sider>
+                }
+
                 <Layout>
-                    <div className='admin-header'>
-                        <Button
-                            type="text"
-                            icon={collapsed ? React.createElement(MenuUnfoldOutlined) : React.createElement(MenuFoldOutlined)}
-                            onClick={() => setCollapsed(!collapsed)}
-                            style={{
-                                fontSize: '16px',
-                                width: 64,
-                                height: 64,
-                            }}
-                        />
-                        <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
-                            <Space style={{ cursor: "pointer" }}>
-                                {/* <Avatar src={urlAvatar} />
+                    {!isMobile &&
+                        <div className='admin-header'>
+                            <Button
+                                type="text"
+                                icon={collapsed ? React.createElement(MenuUnfoldOutlined) : React.createElement(MenuFoldOutlined)}
+                                onClick={() => setCollapsed(!collapsed)}
+                                style={{
+                                    fontSize: '16px',
+                                    width: 64,
+                                    height: 64,
+                                }}
+                            />
+                            <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
+                                <Space style={{ cursor: "pointer" }}>
+                                    ádfasdfasdf
+                                    {/* <Avatar src={urlAvatar} />
                                 {user?.fullName} */}
-                            </Space>
-                        </Dropdown>
-                    </div>
+                                </Space>
+                            </Dropdown>
+                        </div>
+                    }
                     <Content style={{ padding: '15px' }}>
                         <Outlet />
                     </Content>

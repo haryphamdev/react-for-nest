@@ -1,46 +1,26 @@
+import ModalCompany from "@/components/admin/company/modal.company";
 import DataTable from "@/components/client/data-table";
-import { FileSearchOutlined } from "@ant-design/icons";
+import { FileSearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { ProColumns } from '@ant-design/pro-components';
-import { Space } from "antd";
+import { Button, Space } from "antd";
+import { useState } from 'react';
 
 const CompanyPage = () => {
+    const [openModal, setOpenModal] = useState<boolean>(false);
+
     const columns: ProColumns<any>[] = [
         {
-            title: 'Ref Num',
-            key: 'refNum',
-            dataIndex: 'refNum',
-            ellipsis: true,
-            width: 300,
-            copyable: true,
+            title: 'Name',
+            dataIndex: 'name',
         },
         {
-            title: 'MG',
-            key: 'mgId',
-            dataIndex: 'mgId',
-            width: 125,
+            title: 'Address',
+            dataIndex: 'address',
         },
 
         {
-            title: 'FT Fee ID',
-            key: 'ftFeeId',
-            dataIndex: 'ftFeeId',
-            ellipsis: true,
-            width: 200,
-            copyable: true,
-            hideInSearch: true,
-        },
-        {
-            title: 'FT Payment ID',
-            key: 'ftPaymentId',
-            dataIndex: 'ftPaymentId',
-            ellipsis: true,
-            width: 200,
-            copyable: true,
-            hideInSearch: true,
-        },
 
-        {
-            key: 'action',
+            title: 'Action',
             render: (_value, entity, _index, _action) => (
                 <Space>
                     <FileSearchOutlined
@@ -65,23 +45,29 @@ const CompanyPage = () => {
         <div>
             <DataTable
                 // loading={isFetching}
-                // columns={columns}
+                columns={columns}
                 // dataSource={response?.data.results}
                 request={async (params, sort, _filter): Promise<any> => {
 
                 }}
                 scroll={{ x: 2500 }}
                 // pagination={{ ...response?.data.meta }}
-                rowSelection={{}}
-            // toolBarRender={(_action, _rows): any => {
-            //   const accessible = API_URLS.reconciliation.getPaymentHistories();
-
-            //   return (
-            //     <AccessDenied accessible={accessible}>
-            //       <Button type="primary">Export CSV</Button>
-            //     </AccessDenied>
-            //   );
-            // }}
+                rowSelection={false}
+                toolBarRender={(_action, _rows): any => {
+                    return (
+                        <Button
+                            icon={<PlusOutlined />}
+                            type="primary"
+                            onClick={() => setOpenModal(true)}
+                        >
+                            Add New
+                        </Button>
+                    );
+                }}
+            />
+            <ModalCompany
+                openModal={openModal}
+                setOpenModal={setOpenModal}
             />
         </div>
     )
