@@ -1,5 +1,9 @@
 import axios from 'config/axios-customize';
 
+export const callFetchUser = (id: string) => {
+    return axios.get(`/users/${id}`)
+}
+
 export const callRegister = (fullName: string, email: string, password: string, phone: string) => {
     return axios.post('/api/v1/user/register', { fullName, email, password, phone })
 }

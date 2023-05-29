@@ -7,7 +7,7 @@ import type { AxiosRequestConfig } from "axios";
 
 const instance = axiosClient.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
-    withCredentials: true
+    // withCredentials: true
 });
 
 const NO_RETRY_HEADER = 'x-no-retry';
