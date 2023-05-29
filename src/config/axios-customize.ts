@@ -6,7 +6,7 @@ import type { AxiosRequestConfig } from "axios";
  */
 
 const instance = axiosClient.create({
-    baseURL: import.meta.env.REACT_APP_BACKEND_NEST_URL,
+    baseURL: import.meta.env.VITE_BACKEND_URL,
     withCredentials: true
 });
 
