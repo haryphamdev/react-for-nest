@@ -13,6 +13,12 @@ interface IProps {
     setOpenModal: (v: boolean) => void;
     dataInit?: ICompany;
 }
+
+interface ICompany {
+    name: string;
+    address: string;
+}
+
 const ModalCompany = (props: IProps) => {
     const { openModal, setOpenModal } = props;
     const [value, setValue] = useState<string>('');
@@ -22,7 +28,7 @@ const ModalCompany = (props: IProps) => {
 
     }, [])
 
-    const submitCompany = async (valuesForm: any) => {
+    const submitCompany = async (valuesForm: ICompany) => {
         const { name, address } = valuesForm;
 
         const res = await callCreateCompany(name, address, value);
@@ -41,7 +47,7 @@ const ModalCompany = (props: IProps) => {
     }
     return (
         <>
-            <ModalForm
+            <ModalForm<ICompany>
                 title={`Tạo mới Company`}
                 open={openModal}
                 modalProps={{

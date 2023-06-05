@@ -17,6 +17,22 @@ export const callLogout = () => {
 }
 
 
+/**
+ * 
+CRUD for company
+ */
 export const callCreateCompany = (name: string, address: string, description: string) => {
     return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, description })
+}
+
+export const callUpdateCompany = (id: string, name: string, address: string, description: string) => {
+    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`, { name, address, description })
+}
+
+export const callDeleteCompany = (id: string) => {
+    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`);
+}
+
+export const callFetchCompany = (query: string) => {
+    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies?${query}`);
 }
