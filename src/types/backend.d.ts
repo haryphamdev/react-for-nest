@@ -7,10 +7,12 @@ interface IBackendRes<T> {
 
 interface IUser {
     access_token: string;
-    _id: string;
-    role: string;
-    email: string;
-    phone: string
+    user: {
+        _id: string;
+        role: string;
+        email: string;
+        name: string
+    }
 }
 
 interface ICompany {

@@ -16,12 +16,10 @@ const initialState = {
 
     isLoading: true,
     user: {
-        userId: "",
         email: "",
         phone: "",
         _id: "",
-        // role: "",
-        role: "ADMIN",
+        role: "",
     },
     activeMenu: 'home'
 };
@@ -40,14 +38,14 @@ export const accountSlide = createSlice({
             state.isAuthenticated = true;
             state.isLoading = false;
             state.user = {
-                ...state.user, ...action.payload
+                ...state.user,
+                ...action.payload
             }
         },
         setLogoutAction: (state, action) => {
             localStorage.removeItem('access_token');
             state.isAuthenticated = false;
             state.user = {
-                userId: "",
                 email: "",
                 phone: "",
                 _id: "",
