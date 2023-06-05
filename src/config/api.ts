@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IUser } from '@/types/backend';
+import { IBackendRes, ICompany, ICompanyPaginate, IUser } from '@/types/backend';
 import axios from 'config/axios-customize';
 
 /**
@@ -38,9 +38,9 @@ export const callUpdateCompany = (id: string, name: string, address: string, des
 }
 
 export const callDeleteCompany = (id: string) => {
-    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`);
+    return axios.delete<IBackendRes<ICompany>>(`/api/v1/companies/${id}`);
 }
 
 export const callFetchCompany = (query: string) => {
-    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies?${query}`);
+    return axios.get<IBackendRes<ICompanyPaginate>>(`/api/v1/companies?${query}`);
 }

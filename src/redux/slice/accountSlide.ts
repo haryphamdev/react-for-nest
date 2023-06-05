@@ -19,7 +19,7 @@ const initialState = {
         email: "",
         phone: "",
         _id: "",
-        role: "",
+        role: "ADMIN",
     },
     activeMenu: 'home'
 };

@@ -1,57 +1,191 @@
 import ModalCompany from "@/components/admin/company/modal.company";
 import DataTable from "@/components/client/data-table";
-import { FileSearchOutlined, PlusOutlined } from "@ant-design/icons";
-import { ProColumns } from '@ant-design/pro-components';
-import { Button, Space } from "antd";
-import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchCompany } from "@/redux/slice/companySlide";
+import { ICompany } from "@/types/backend";
+import { DeleteOutlined, EditOutlined, FileSearchOutlined, PlusOutlined } from "@ant-design/icons";
+import { ActionType, ProColumns } from '@ant-design/pro-components';
+import { Button, Popconfirm, Space, message, notification } from "antd";
+import { useState, useRef } from 'react';
+import dayjs from 'dayjs';
+import { callDeleteCompany } from "@/config/api";
+import queryString from 'query-string';
 
 const CompanyPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
+    const [dataInit, setDataInit] = useState<ICompany | null>(null);
 
-    const columns: ProColumns<any>[] = [
+    const tableRef = useRef<ActionType>();
+
+    const isFetching = useAppSelector(state => state.company.isFetching);
+    const meta = useAppSelector(state => state.company.meta);
+    const companies = useAppSelector(state => state.company.result);
+    const dispatch = useAppDispatch();
+
+    const handleDeleteCompany = async (_id: string | undefined) => {
+        if (_id) {
+            const res = await callDeleteCompany(_id);
+            if (res && res.data) {
+                message.success('Xóa Company thành công');
+                reloadTable();
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
+        }
+    }
+
+    const reloadTable = () => {
+        tableRef?.current?.reload();
+    }
+
+    const columns: ProColumns<ICompany>[] = [
+        {
+            title: 'Id',
+            dataIndex: '_id',
+            width: 250,
+            render: (text, record, index, action) => {
+                return (
+                    <a href="#">
+                        {record._id}
+                    </a>
+                )
+            },
+            hideInSearch: true,
+        },
         {
             title: 'Name',
             dataIndex: 'name',
+            sorter: true,
         },
         {
             title: 'Address',
             dataIndex: 'address',
+            sorter: true,
         },
 
         {
+            title: 'CreatedAt',
+            dataIndex: 'createdAt',
+            width: 200,
+            sorter: true,
+            render: (text, record, index, action) => {
+                return (
+                    <>{dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss')}</>
+                )
+            },
+            hideInSearch: true,
+        },
+        {
+            title: 'UpdatedAt',
+            dataIndex: 'updatedAt',
+            width: 200,
+            sorter: true,
+            render: (text, record, index, action) => {
+                return (
+                    <>{dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss')}</>
+                )
+            },
+            hideInSearch: true,
+        },
+        {
 
-            title: 'Action',
+            title: 'Actions',
+            hideInSearch: true,
+            width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    <FileSearchOutlined
+                    <EditOutlined
                         style={{
-                            marginLeft: 10,
                             fontSize: 20,
-                            color: '#d81921',
+                            color: '#ffa500',
                         }}
                         type=""
                         onClick={() => {
-                            //   setVisible(true);
-                            //   setSelectedItem(entity);
+                            setOpenModal(true);
+                            setDataInit(entity);
                         }}
                     />
+
+                    <Popconfirm
+                        placement="leftTop"
+                        title={"Xác nhận xóa company"}
+                        description={"Bạn có chắc chắn muốn xóa company này ?"}
+                        onConfirm={() => handleDeleteCompany(entity._id)}
+                        okText="Xác nhận"
+                        cancelText="Hủy"
+                    >
+                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
+                            <DeleteOutlined
+                                style={{
+                                    fontSize: 20,
+                                    color: '#ff4d4f',
+                                }}
+                            />
+                        </span>
+                    </Popconfirm>
                 </Space>
             ),
-            hideInSearch: true,
-            width: 50,
+
         },
     ];
+
+    const buildQuery = (params: any, sort: any, filter: any) => {
+        const clone = { ...params };
+        if (clone.name) clone.name = `/${clone.name}/i`;
+        if (clone.address) clone.address = `/${clone.address}/i`;
+
+        let temp = queryString.stringify(clone);
+
+        let sortBy = "";
+        if (sort && sort.name) {
+            sortBy = sort.name === 'ascend' ? "sort=name" : "sort=-name";
+        }
+        if (sort && sort.address) {
+            sortBy = sort.address === 'ascend' ? "sort=address" : "sort=-address";
+        }
+        if (sort && sort.createdAt) {
+            sortBy = sort.createdAt === 'ascend' ? "sort=createdAt" : "sort=-createdAt";
+        }
+        if (sort && sort.updatedAt) {
+            sortBy = sort.updatedAt === 'ascend' ? "sort=updatedAt" : "sort=-updatedAt";
+        }
+
+        //mặc định sort theo updatedAt
+        if (Object.keys(sortBy).length === 0) {
+            temp = `${temp}&sort=-updatedAt`;
+        } else {
+            temp = `${temp}&${sortBy}`;
+        }
+
+        return temp;
+    }
+
     return (
         <div>
-            <DataTable
-                // loading={isFetching}
+            <DataTable<ICompany>
+                actionRef={tableRef}
+                headerTitle="Danh sách Công Ty"
+                rowKey="_id"
+                loading={isFetching}
                 columns={columns}
-                // dataSource={response?.data.results}
-                request={async (params, sort, _filter): Promise<any> => {
-
+                dataSource={companies}
+                request={async (params, sort, filter): Promise<any> => {
+                    const query = buildQuery(params, sort, filter);
+                    dispatch(fetchCompany({ query }))
                 }}
                 scroll={{ x: 2500 }}
-                // pagination={{ ...response?.data.meta }}
+                pagination={
+                    {
+                        current: meta.current,
+                        pageSize: meta.pageSize,
+                        showSizeChanger: true,
+                        total: meta.total,
+                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                    }
+                }
                 rowSelection={false}
                 toolBarRender={(_action, _rows): any => {
                     return (
@@ -60,7 +194,7 @@ const CompanyPage = () => {
                             type="primary"
                             onClick={() => setOpenModal(true)}
                         >
-                            Add New
+                            Thêm mới
                         </Button>
                     );
                 }}
@@ -68,6 +202,9 @@ const CompanyPage = () => {
             <ModalCompany
                 openModal={openModal}
                 setOpenModal={setOpenModal}
+                reloadTable={reloadTable}
+                dataInit={dataInit}
+                setDataInit={setDataInit}
             />
         </div>
     )

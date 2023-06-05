@@ -1,57 +1,84 @@
 import { CheckSquareOutlined } from "@ant-design/icons";
 import { FooterToolbar, ModalForm, ProCard, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
-import { Col, Form, Row, message } from "antd";
+import { Col, Form, Row, message, notification } from "antd";
 import 'styles/reset.scss';
 import { isMobile } from 'react-device-detect';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useState } from "react";
-import { callCreateCompany } from "@/config/api";
+import { callCreateCompany, callUpdateCompany } from "@/config/api";
+import { ICompany } from "@/types/backend";
 
 interface IProps {
     openModal: boolean;
     setOpenModal: (v: boolean) => void;
-    dataInit?: ICompany;
+    dataInit?: ICompany | null;
+    setDataInit: (v: any) => void;
+    reloadTable: () => void;
 }
 
-interface ICompany {
+interface ICompanyForm {
     name: string;
     address: string;
 }
 
 const ModalCompany = (props: IProps) => {
-    const { openModal, setOpenModal } = props;
+    const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
     const [value, setValue] = useState<string>('');
     const [form] = Form.useForm();
 
     useEffect(() => {
+        if (dataInit?._id && dataInit?.description) {
+            setValue(dataInit.description);
+        }
+    }, [dataInit])
 
-    }, [])
-
-    const submitCompany = async (valuesForm: ICompany) => {
+    const submitCompany = async (valuesForm: ICompanyForm) => {
         const { name, address } = valuesForm;
 
-        const res = await callCreateCompany(name, address, value);
-        if (res.data) {
-            message.success("Thêm mới company thành công");
-            setOpenModal(false);
-            handleReset();
+        if (dataInit?._id) {
+            //update
+            const res = await callUpdateCompany(dataInit._id, name, address, value);
+            if (res.data) {
+                message.success("Cập nhật company thành công");
+                handleReset();
+                reloadTable();
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
         } else {
-
+            //create
+            const res = await callCreateCompany(name, address, value);
+            if (res.data) {
+                message.success("Thêm mới company thành công");
+                handleReset();
+                reloadTable();
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
         }
     }
 
     const handleReset = () => {
         form.resetFields();
         setValue("");
+        setOpenModal(false);
+        setDataInit(null);
     }
+
     return (
         <>
-            <ModalForm<ICompany>
+            <ModalForm
                 title={`Tạo mới Company`}
                 open={openModal}
                 modalProps={{
-                    onCancel: () => { setOpenModal(false); handleReset(); },
+                    onCancel: () => { handleReset() },
                     afterClose: () => handleReset(),
                     destroyOnClose: true,
                     width: isMobile ? "100%" : 900,
@@ -63,6 +90,7 @@ const ModalCompany = (props: IProps) => {
                 preserve={false}
                 form={form}
                 onFinish={submitCompany}
+                initialValues={dataInit?._id ? dataInit : {}}
                 submitter={{
                     render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
                     submitButtonProps: {
@@ -70,7 +98,7 @@ const ModalCompany = (props: IProps) => {
                     },
                     searchConfig: {
                         resetText: "Hủy",
-                        submitText: "Tạo mới",
+                        submitText: <>{dataInit?._id ? "Cập nhật" : "Tạo mới"}</>,
                     }
                 }}
             >

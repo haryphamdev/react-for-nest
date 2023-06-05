@@ -19,7 +19,22 @@ export interface ICompany {
     _id?: string;
     name?: string;
     address?: string;
-    description?: string
+    description?: string;
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface ICompanyPaginate {
+    meta: {
+        current: number;
+        pageSize: number;
+        pages: number;
+        total: number;
+    },
+    result: ICompany[]
 }
 
 export interface IUserRegister {
