@@ -2,6 +2,11 @@ import { defineConfig, loadEnv, type PluginOption } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import path from 'path';
 import { visualizer } from "rollup-plugin-visualizer";
+import dns from 'dns';
+
+//running on localhost instead of IP 127.0.0.1
+// https://vitejs.dev/config/server-options.html#server-host
+dns.setDefaultResultOrder('verbatim')
 
 // https://vitejs.dev/config/
 // https://v2.vitejs.dev/config/#environment-variables
