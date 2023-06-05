@@ -24,7 +24,7 @@ interface ICompanyForm {
 
 const ModalCompany = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
-    const [value, setValue] = useState<string>('');
+    const [value, setValue] = useState<string>("");
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -68,75 +68,80 @@ const ModalCompany = (props: IProps) => {
     const handleReset = () => {
         form.resetFields();
         setValue("");
-        setOpenModal(false);
         setDataInit(null);
+        setOpenModal(false);
     }
 
     return (
         <>
-            <ModalForm
-                title={`Tạo mới Company`}
-                open={openModal}
-                modalProps={{
-                    onCancel: () => { handleReset() },
-                    afterClose: () => handleReset(),
-                    destroyOnClose: true,
-                    width: isMobile ? "100%" : 900,
-                    footer: null,
-                    keyboard: false,
-                    maskClosable: false
-                }}
-                scrollToFirstError={true}
-                preserve={false}
-                form={form}
-                onFinish={submitCompany}
-                initialValues={dataInit?._id ? dataInit : {}}
-                submitter={{
-                    render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
-                    submitButtonProps: {
-                        icon: <CheckSquareOutlined />
-                    },
-                    searchConfig: {
-                        resetText: "Hủy",
-                        submitText: <>{dataInit?._id ? "Cập nhật" : "Tạo mới"}</>,
-                    }
-                }}
-            >
-                <Row gutter={16}>
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormText
-                            label="Tên công ty"
-                            name="name"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập tên công ty"
-                        />
-                    </Col>
-
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormTextArea
-                            label="Địa chỉ"
-                            name="address"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập địa chỉ công ty"
-                        />
-                    </Col>
-
-                    <ProCard
-                        title="Miêu tả"
-                        // subTitle="mô tả công ty"
-                        headStyle={{ color: '#d81921' }}
-                        style={{ marginBottom: 20 }}
-                        headerBordered
-                        size="small"
-                        bordered
-                    >
-                        <Col span={24}>
-                            <ReactQuill
-                                theme="snow" value={value} onChange={setValue} />
+            {openModal &&
+                <ModalForm
+                    title={<>{dataInit?._id ? "Cập nhật Company" : "Tạo mới Company"}</>}
+                    open={openModal}
+                    modalProps={{
+                        onCancel: () => { handleReset() },
+                        afterClose: () => handleReset(),
+                        destroyOnClose: true,
+                        width: isMobile ? "100%" : 900,
+                        footer: null,
+                        keyboard: false,
+                        maskClosable: false
+                    }}
+                    scrollToFirstError={true}
+                    preserve={false}
+                    form={form}
+                    onFinish={submitCompany}
+                    initialValues={dataInit?._id ? dataInit : {}}
+                    submitter={{
+                        render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
+                        submitButtonProps: {
+                            icon: <CheckSquareOutlined />
+                        },
+                        searchConfig: {
+                            resetText: "Hủy",
+                            submitText: <>{dataInit?._id ? "Cập nhật" : "Tạo mới"}</>,
+                        }
+                    }}
+                >
+                    <Row gutter={16}>
+                        <Col lg={12} md={12} sm={24} xs={24}>
+                            <ProFormText
+                                label="Tên công ty"
+                                name="name"
+                                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                                placeholder="Nhập tên công ty"
+                            />
                         </Col>
-                    </ProCard>
-                </Row>
-            </ModalForm>
+
+                        <Col lg={12} md={12} sm={24} xs={24}>
+                            <ProFormTextArea
+                                label="Địa chỉ"
+                                name="address"
+                                rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                                placeholder="Nhập địa chỉ công ty"
+                            />
+                        </Col>
+
+                        <ProCard
+                            title="Miêu tả"
+                            // subTitle="mô tả công ty"
+                            headStyle={{ color: '#d81921' }}
+                            style={{ marginBottom: 20 }}
+                            headerBordered
+                            size="small"
+                            bordered
+                        >
+                            <Col span={24}>
+                                <ReactQuill
+                                    theme="snow"
+                                    value={value}
+                                    onChange={setValue}
+                                />
+                            </Col>
+                        </ProCard>
+                    </Row>
+                </ModalForm>
+            }
         </>
     )
 }
