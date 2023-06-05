@@ -1,7 +1,12 @@
+import { IBackendRes, ICompany, IUser } from '@/types/backend';
 import axios from 'config/axios-customize';
 
-export const callRegister = (fullName: string, email: string, password: string, phone: string) => {
-    return axios.post('/api/v1/user/register', { fullName, email, password, phone })
+/**
+ * 
+Module Auth
+ */
+export const callRegister = (name: string, email: string, password: string, age: number, gender: string, address: string) => {
+    return axios.post('/api/v1/auth/register', { name, email, password, age, gender, address })
 }
 
 export const callLogin = (username: string, password: string) => {
@@ -17,9 +22,12 @@ export const callLogout = () => {
 }
 
 
+
+
+
 /**
  * 
-CRUD for company
+Module Company
  */
 export const callCreateCompany = (name: string, address: string, description: string) => {
     return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, description })
