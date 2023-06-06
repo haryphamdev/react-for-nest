@@ -57,7 +57,7 @@ instance.interceptors.response.use(
         ) {
             localStorage.removeItem('access_token')
             alert(`You don't have permission to visit this page. OK ?`);
-            window.location.href = "/";
+            window.location.href = "/login";
         }
 
         return error?.response?.data ?? Promise.reject(error);

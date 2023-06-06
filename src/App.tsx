@@ -5,7 +5,6 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { callFetchAccount } from 'config/api';
 import NotFound from 'components/share/not.found';
 import Loading from 'components/share/loading';
 import LoginPage from 'pages/auth/login';
@@ -22,6 +21,7 @@ import PermissionPage from './pages/admin/permission';
 import ResumePage from './pages/admin/resume';
 import RolePage from './pages/admin/role';
 import UserPage from './pages/admin/user';
+import { fetchAccount } from './redux/slice/accountSlide';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,21 +39,13 @@ export default function App() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(state => state.account.isLoading)
 
-  const getAccount = async () => {
+  useEffect(() => {
     if (
       window.location.pathname === '/login'
       || window.location.pathname === '/register'
     )
       return;
-
-    const res = await callFetchAccount();
-    if (res && res.data) {
-      // dispatch(doGetAccountAction(res.data))
-    }
-  }
-
-  useEffect(() => {
-    getAccount();
+    dispatch(fetchAccount())
   }, [])
 
   const router = createBrowserRouter([

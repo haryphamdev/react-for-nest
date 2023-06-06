@@ -14,7 +14,7 @@ const RegisterPage = () => {
     const onFinish = async (values: IUser) => {
         const { name, email, password, age, gender, address } = values;
         setIsSubmit(true);
-        const res = await callRegister(name, email, password, +age, gender, address);
+        const res = await callRegister(name, email, password as string, +age, gender, address);
         setIsSubmit(false);
         if (res?.data?._id) {
             message.success('Đăng ký tài khoản thành công!');

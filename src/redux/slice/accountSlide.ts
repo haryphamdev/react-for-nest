@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from '@/config/axios-customize';
+import { callFetchAccount } from '@/config/api';
 
 // First, create the thunk
 export const fetchAccount = createAsyncThunk(
     'account/fetchAccount',
     async () => {
-        const response = await axios.get('/api/v1/auth/account')
+        const response = await callFetchAccount();
         return response.data;
     }
 )
@@ -13,7 +14,6 @@ export const fetchAccount = createAsyncThunk(
 const initialState = {
     // isAuthenticated: false,
     isAuthenticated: true,
-
     isLoading: true,
     user: {
         email: "",
@@ -56,21 +56,28 @@ export const accountSlide = createSlice({
     },
     extraReducers: (builder) => {
         // Add reducers for additional action types here, and handle loading state as needed
+        builder.addCase(fetchAccount.pending, (state, action) => {
+            if (action.payload) {
+                state.isAuthenticated = false;
+                state.isLoading = true;
+            }
+        })
+
         builder.addCase(fetchAccount.fulfilled, (state, action) => {
             if (action.payload) {
                 state.isAuthenticated = true;
                 state.isLoading = false;
-
-                state.user.email = action.payload.email;
-                state.user.phone = action.payload.phone;
-                state.user._id = action.payload._id;
-                state.user.role = action.payload.role;
-
+                state.user = { ...state.user, ...action.payload.user }
             }
-            // Add user to the state array
-
-            // state.courseOrder = action.payload;
         })
+
+        builder.addCase(fetchAccount.rejected, (state, action) => {
+            if (action.payload) {
+                state.isAuthenticated = false;
+                state.isLoading = false;
+            }
+        })
+
     },
 
 });
