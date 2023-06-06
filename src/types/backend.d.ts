@@ -5,7 +5,17 @@ export interface IBackendRes<T> {
     data?: T;
 }
 
-export interface IUser {
+export interface IModelPaginate<T> {
+    meta: {
+        current: number;
+        pageSize: number;
+        pages: number;
+        total: number;
+    },
+    result: T[]
+}
+
+export interface IAccount {
     access_token: string;
     user: {
         _id: string;
@@ -27,21 +37,25 @@ export interface ICompany {
     updatedAt?: string;
 }
 
-export interface ICompanyPaginate {
-    meta: {
-        current: number;
-        pageSize: number;
-        pages: number;
-        total: number;
-    },
-    result: ICompany[]
-}
 
-export interface IUserRegister {
+
+export interface IUser {
+    _id?: string;
     name: string;
     email: string;
-    password: string;
+    password?: string;
     age: number;
     gender: string;
     address: string;
+    role?: string;
+    company?: {
+        _id: string;
+        name: string;
+    }
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
 }
+

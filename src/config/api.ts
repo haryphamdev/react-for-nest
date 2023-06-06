@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, ICompanyPaginate, IUser } from '@/types/backend';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate } from '@/types/backend';
 import axios from 'config/axios-customize';
 
 /**
@@ -10,19 +10,20 @@ export const callRegister = (name: string, email: string, password: string, age:
 }
 
 export const callLogin = (username: string, password: string) => {
-    return axios.post<IBackendRes<IUser>>('/api/v1/auth/login', { username, password })
+    return axios.post<IBackendRes<IAccount>>('/api/v1/auth/login', { username, password })
 }
 
 export const callFetchAccount = () => {
     return axios.get('/api/v1/auth/account')
 }
 
+export const callRefreshToken = () => {
+    return axios.get('/api/v1/auth/refresh')
+}
+
 export const callLogout = () => {
     return axios.post('/api/v1/auth/logout')
 }
-
-
-
 
 
 /**
@@ -42,5 +43,26 @@ export const callDeleteCompany = (id: string) => {
 }
 
 export const callFetchCompany = (query: string) => {
-    return axios.get<IBackendRes<ICompanyPaginate>>(`/api/v1/companies?${query}`);
+    return axios.get<IBackendRes<IModelPaginate<ICompany>>>(`/api/v1/companies?${query}`);
+}
+
+
+/**
+ * 
+Module User
+ */
+export const callCreateUser = (user: IUser) => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/users', { ...user })
+}
+
+export const callUpdateUser = (user: IUser) => {
+    return axios.patch<IBackendRes<IUser>>(`/api/v1/users`, { ...user })
+}
+
+export const callDeleteUser = (id: string) => {
+    return axios.delete<IBackendRes<IUser>>(`/api/v1/users/${id}`);
+}
+
+export const callFetchUser = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IUser>>>(`/api/v1/users?${query}`);
 }

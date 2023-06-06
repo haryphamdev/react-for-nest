@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { callRegister } from 'config/api';
 import styles from 'styles/auth.module.scss';
-import { IUserRegister } from '@/types/backend';
+import { IUser } from '@/types/backend';
 const { Option } = Select;
 
 
@@ -11,7 +11,7 @@ const RegisterPage = () => {
     const navigate = useNavigate();
     const [isSubmit, setIsSubmit] = useState(false);
 
-    const onFinish = async (values: IUserRegister) => {
+    const onFinish = async (values: IUser) => {
         const { name, email, password, age, gender, address } = values;
         setIsSubmit(true);
         const res = await callRegister(name, email, password, +age, gender, address);
@@ -40,7 +40,7 @@ const RegisterPage = () => {
                             <h2 className={`${styles.text} ${styles["text-large"]}`}> Đăng Ký Tài Khoản </h2>
                             < Divider />
                         </div>
-                        < Form<IUserRegister>
+                        < Form<IUser>
                             name="basic"
                             // style={{ maxWidth: 600, margin: '0 auto' }}
                             onFinish={onFinish}
