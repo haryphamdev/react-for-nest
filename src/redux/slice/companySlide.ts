@@ -48,6 +48,18 @@ export const companySlide = createSlice({
     },
     extraReducers: (builder) => {
         // Add reducers for additional action types here, and handle loading state as needed
+        builder.addCase(fetchCompany.pending, (state, action) => {
+            state.isFetching = true;
+            // Add user to the state array
+            // state.courseOrder = action.payload;
+        })
+
+        builder.addCase(fetchCompany.rejected, (state, action) => {
+            state.isFetching = false;
+            // Add user to the state array
+            // state.courseOrder = action.payload;
+        })
+
         builder.addCase(fetchCompany.fulfilled, (state, action) => {
             if (action.payload && action.payload.data) {
                 state.isFetching = false;

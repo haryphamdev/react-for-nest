@@ -43,14 +43,26 @@ const CompanyPage = () => {
 
     const columns: ProColumns<ICompany>[] = [
         {
+            title: 'STT',
+            key: 'index',
+            width: 50,
+            align: "center",
+            render: (text, record, index) => {
+                return (
+                    <>
+                        {(index + 1) + (meta.current - 1) * (meta.pageSize)}
+                    </>)
+            }
+        },
+        {
             title: 'Id',
             dataIndex: '_id',
             width: 250,
             render: (text, record, index, action) => {
                 return (
-                    <a href="#">
+                    <span>
                         {record._id}
-                    </a>
+                    </span>
                 )
             },
             hideInSearch: true,
