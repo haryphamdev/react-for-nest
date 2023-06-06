@@ -24,6 +24,10 @@ interface ICompanyForm {
 
 const ModalCompany = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
+
+    //modal animation
+    const [animation, setAnimation] = useState<string>('open');
+
     const [value, setValue] = useState<string>("");
     const [form] = Form.useForm();
 
@@ -65,11 +69,16 @@ const ModalCompany = (props: IProps) => {
         }
     }
 
-    const handleReset = () => {
+    const handleReset = async () => {
         form.resetFields();
         setValue("");
         setDataInit(null);
+
+        //add animation when closing modal
+        setAnimation('close')
+        await new Promise(r => setTimeout(r, 400))
         setOpenModal(false);
+        setAnimation('open')
     }
 
     return (
@@ -85,7 +94,9 @@ const ModalCompany = (props: IProps) => {
                         width: isMobile ? "100%" : 900,
                         footer: null,
                         keyboard: false,
-                        maskClosable: false
+                        maskClosable: false,
+                        className: `modal-company ${animation}`,
+                        rootClassName: `modal-company-root ${animation}`
                     }}
                     scrollToFirstError={true}
                     preserve={false}
