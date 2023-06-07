@@ -47,6 +47,7 @@ instance.interceptors.response.use(
     async (error) => {
         if (error.config && error.response
             && +error.response.status === 401
+            && error.config.url !== '/api/v1/auth/login'
             && !error.config.headers[NO_RETRY_HEADER]
         ) {
             const access_token = await handleRefreshToken();
@@ -65,7 +66,7 @@ instance.interceptors.response.use(
         ) {
             const message = error?.response?.data?.message ?? "Có lỗi xảy ra, vui lòng login.";
             //dispatch redux action
-            store.dispatch(setRefreshTokenAction({ status: true, message }))
+            store.dispatch(setRefreshTokenAction({ status: true, message }));
         }
 
         return error?.response?.data ?? Promise.reject(error);
