@@ -23,6 +23,7 @@ import RolePage from './pages/admin/role';
 import UserPage from './pages/admin/user';
 import { fetchAccount } from './redux/slice/accountSlide';
 import LayoutApp from './components/share/layout.app';
+import JobPage from './pages/admin/job';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,6 +84,14 @@ export default function App() {
           element:
             <ProtectedRoute>
               <UserPage />
+            </ProtectedRoute>
+        },
+
+        {
+          path: "job",
+          element:
+            <ProtectedRoute>
+              <JobPage />
             </ProtectedRoute>
         },
 

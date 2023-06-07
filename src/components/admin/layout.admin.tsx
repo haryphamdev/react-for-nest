@@ -10,6 +10,8 @@ import {
     AliwangwangOutlined,
     LogoutOutlined,
     HeartTwoTone,
+    BugOutlined,
+    ScheduleOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useNavigate } from "react-router-dom";
@@ -58,6 +60,11 @@ const LayoutAdmin = () => {
             icon: <UserOutlined />
         },
         {
+            label: <Link to='/admin/job'>Job</Link>,
+            key: 'job',
+            icon: <ScheduleOutlined />
+        },
+        {
             label: <Link to='/admin/resume'>Resume</Link>,
             key: 'resume',
             icon: <AliwangwangOutlined />
@@ -72,16 +79,19 @@ const LayoutAdmin = () => {
             key: 'role',
             icon: <ExceptionOutlined />
         },
-        {
+
+    ];
+
+    if (isMobile) {
+        items.push({
             label: <label
                 style={{ cursor: 'pointer' }}
                 onClick={() => handleLogout()}
             >Đăng xuất</label>,
             key: 'logout',
             icon: <LogoutOutlined />
-        },
-
-    ];
+        })
+    }
 
     const itemsDropdown = [
         {
@@ -95,9 +105,8 @@ const LayoutAdmin = () => {
             >Đăng xuất</label>,
             key: 'logout',
         },
-
     ];
-
+    console.log(">>> check ismobile: ", isMobile)
     return (
         <>
             <Layout
@@ -111,7 +120,7 @@ const LayoutAdmin = () => {
                         collapsed={collapsed}
                         onCollapse={(value) => setCollapsed(value)}>
                         <div style={{ height: 32, margin: 16, textAlign: 'center' }}>
-                            Admin
+                            <BugOutlined />  ADMIN
                         </div>
                         <Menu
                             defaultSelectedKeys={[activeMenu]}
