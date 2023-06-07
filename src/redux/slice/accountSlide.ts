@@ -19,6 +19,7 @@ const initialState = {
     errorRefreshToken: "",
     user: {
         email: "",
+        name: "",
         phone: "",
         _id: "",
         role: "ADMIN",
@@ -52,6 +53,7 @@ export const accountSlide = createSlice({
                 phone: "",
                 _id: "",
                 role: "",
+                name: ""
             }
         },
         setRefreshTokenAction: (state, action) => {

@@ -188,7 +188,7 @@ const CompanyPage = () => {
                     const query = buildQuery(params, sort, filter);
                     dispatch(fetchCompany({ query }))
                 }}
-                scroll={{ x: 2500 }}
+                scroll={{ x: true }}
                 pagination={
                     {
                         current: meta.current,

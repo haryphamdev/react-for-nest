@@ -8,16 +8,17 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     AliwangwangOutlined,
+    LogoutOutlined,
+    HeartTwoTone,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { callLogout } from 'config/api';
-// import { doLogoutAction } from '@/redux/account/accountSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { isMobile } from 'react-device-detect';
-
 import type { MenuProps } from 'antd';
+import { setLogoutAction } from '@/redux/slice/accountSlide';
 
 const { Content, Footer, Sider } = Layout;
 
@@ -28,15 +29,13 @@ const LayoutAdmin = () => {
     const [activeMenu, setActiveMenu] = useState('dashboard');
     const user = useAppSelector(state => state.account.user);
 
-    const [showManageAccount, setShowManageAccount] = useState(false);
-
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const handleLogout = async () => {
         const res = await callLogout();
         if (res && res.data) {
-            // dispatch(doLogoutAction());
+            dispatch(setLogoutAction({}));
             message.success('Đăng xuất thành công');
             navigate('/')
         }
@@ -73,17 +72,18 @@ const LayoutAdmin = () => {
             key: 'role',
             icon: <ExceptionOutlined />
         },
+        {
+            label: <label
+                style={{ cursor: 'pointer' }}
+                onClick={() => handleLogout()}
+            >Đăng xuất</label>,
+            key: 'logout',
+            icon: <LogoutOutlined />
+        },
 
     ];
 
     const itemsDropdown = [
-        {
-            label: <label
-                style={{ cursor: 'pointer' }}
-                onClick={() => setShowManageAccount(true)}
-            >Quản lý tài khoản</label>,
-            key: 'account',
-        },
         {
             label: <Link to={'/'}>Trang chủ</Link>,
             key: 'home',
@@ -97,8 +97,6 @@ const LayoutAdmin = () => {
         },
 
     ];
-
-    // const urlAvatar = `${import.meta.env.VITE_BACKEND_URL}/images/avatar/${user?.avatar}`;
 
     return (
         <>
@@ -133,7 +131,7 @@ const LayoutAdmin = () => {
 
                 <Layout>
                     {!isMobile &&
-                        <div className='admin-header'>
+                        <div className='admin-header' style={{ display: "flex", justifyContent: "space-between", marginRight: 20 }}>
                             <Button
                                 type="text"
                                 icon={collapsed ? React.createElement(MenuUnfoldOutlined) : React.createElement(MenuFoldOutlined)}
@@ -144,11 +142,12 @@ const LayoutAdmin = () => {
                                     height: 64,
                                 }}
                             />
+
                             <Dropdown menu={{ items: itemsDropdown }} trigger={['click']}>
                                 <Space style={{ cursor: "pointer" }}>
-                                    ádfasdfasdf
-                                    {/* <Avatar src={urlAvatar} />
-                                {user?.fullName} */}
+                                    Welcome {user?.name}
+                                    <Avatar> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
+
                                 </Space>
                             </Dropdown>
                         </div>
@@ -156,9 +155,9 @@ const LayoutAdmin = () => {
                     <Content style={{ padding: '15px' }}>
                         <Outlet />
                     </Content>
-                    {/* <Footer style={{ padding: 0 }}>
-                    React Test Fresher &copy; Hỏi Dân IT - Made with <HeartTwoTone />
-                </Footer> */}
+                    {/* <Footer style={{ padding: 10, textAlign: 'center' }}>
+                        React Typescript series Nest.JS &copy; Hỏi Dân IT - Made with <HeartTwoTone />
+                    </Footer> */}
                 </Layout>
             </Layout>
 
