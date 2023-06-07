@@ -15,6 +15,8 @@ const initialState = {
     // isAuthenticated: false,
     isAuthenticated: true,
     isLoading: true,
+    isRefreshToken: false,
+    errorRefreshToken: "",
     user: {
         email: "",
         phone: "",
@@ -51,6 +53,10 @@ export const accountSlide = createSlice({
                 _id: "",
                 role: "",
             }
+        },
+        setRefreshTokenAction: (state, action) => {
+            state.isRefreshToken = action.payload?.status ?? false;
+            state.errorRefreshToken = action.payload?.message ?? "";
         }
 
     },
@@ -83,7 +89,7 @@ export const accountSlide = createSlice({
 });
 
 export const {
-    setActiveMenu, setUserLoginInfo, setLogoutAction
+    setActiveMenu, setUserLoginInfo, setLogoutAction, setRefreshTokenAction
 } = accountSlide.actions;
 
 export default accountSlide.reducer;

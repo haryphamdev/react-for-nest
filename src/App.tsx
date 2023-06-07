@@ -22,10 +22,10 @@ import ResumePage from './pages/admin/resume';
 import RolePage from './pages/admin/role';
 import UserPage from './pages/admin/user';
 import { fetchAccount } from './redux/slice/accountSlide';
+import LayoutApp from './components/share/layout.app';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
-
   return (
     <div className='layout-app'>
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
@@ -37,7 +37,8 @@ const LayoutClient = () => {
 
 export default function App() {
   const dispatch = useAppDispatch();
-  const isLoading = useAppSelector(state => state.account.isLoading)
+  const isLoading = useAppSelector(state => state.account.isLoading);
+
 
   useEffect(() => {
     if (
@@ -51,18 +52,17 @@ export default function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <LayoutClient />,
+      element: (<LayoutApp><LayoutClient /></LayoutApp>),
       errorElement: <NotFound />,
       children: [
         { index: true, element: <HomePage /> },
-
 
       ],
     },
 
     {
       path: "/admin",
-      element: <LayoutAdmin />,
+      element: (<LayoutApp><LayoutAdmin /> </LayoutApp>),
       errorElement: <NotFound />,
       children: [
         {
