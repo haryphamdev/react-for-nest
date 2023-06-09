@@ -14,7 +14,7 @@ import ProtectedRoute from 'components/share/protected-route.ts';
 import Header from 'components/client/header.client';
 import Footer from 'components/client/footer.client';
 import HomePage from 'pages/home';
-import 'styles/app.module.scss';
+import styles from 'styles/app.module.scss';
 import DashboardPage from './pages/admin/dashboard';
 import CompanyPage from './pages/admin/company';
 import PermissionPage from './pages/admin/permission';
@@ -30,7 +30,9 @@ const LayoutClient = () => {
   return (
     <div className='layout-app'>
       <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-      <Outlet context={[searchTerm, setSearchTerm]} />
+      <div className={styles['content-app']}>
+        <Outlet context={[searchTerm, setSearchTerm]} />
+      </div>
       <Footer />
     </div>
   )

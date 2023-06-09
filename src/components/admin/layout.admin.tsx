@@ -106,7 +106,7 @@ const LayoutAdmin = () => {
             key: 'logout',
         },
     ];
-    console.log(">>> check ismobile: ", isMobile)
+
     return (
         <>
             <Layout
