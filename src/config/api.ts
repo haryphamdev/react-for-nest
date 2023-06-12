@@ -1,4 +1,4 @@
-import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount } from '@/types/backend';
+import { IBackendRes, ICompany, IAccount, IUser, IModelPaginate, IGetAccount, IJob } from '@/types/backend';
 import axios from 'config/axios-customize';
 
 /**
@@ -84,4 +84,24 @@ export const callDeleteUser = (id: string) => {
 
 export const callFetchUser = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IUser>>>(`/api/v1/users?${query}`);
+}
+
+/**
+ * 
+Module Job
+ */
+export const callCreateJob = (job: IJob) => {
+    return axios.post<IBackendRes<IJob>>('/api/v1/jobs', { ...job })
+}
+
+export const callUpdateJob = (job: IJob) => {
+    return axios.patch<IBackendRes<IJob>>(`/api/v1/jobs`, { ...job })
+}
+
+export const callDeleteJob = (id: string) => {
+    return axios.delete<IBackendRes<IJob>>(`/api/v1/jobs/${id}`);
+}
+
+export const callFetchJob = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IJob>>>(`/api/v1/jobs?${query}`);
 }

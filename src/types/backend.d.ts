@@ -62,3 +62,21 @@ export interface IUser {
     updatedAt?: string;
 }
 
+export interface IJob {
+    _id?: string;
+    name: string;
+    skills: string[];
+    company?: {
+        _id: string;
+        name: string;
+    }
+    salary: number;
+    quantity: number;
+    level: string;
+    description: string;
+    startDate: Date;
+    endDate: Date;
+    isActive: boolean;
+}
+
+

@@ -122,3 +122,37 @@
         color: white;
     }
 }
+
+.home-section {
+    .empty {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 50px;
+    }
+
+    .dflex-mobile {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dflex-pc {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .company-content {
+        padding-top: 50px;
+    }
+
+    .title {
+        font-size: 27px;
+        font-family: "Roboto", sans-serif;
+        color: #353535;
+        line-height: 35px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+}
