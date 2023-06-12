@@ -52,7 +52,8 @@ const CompanyPage = () => {
                     <>
                         {(index + 1) + (meta.current - 1) * (meta.pageSize)}
                     </>)
-            }
+            },
+            hideInSearch: true,
         },
         {
             title: 'Id',

@@ -50,12 +50,7 @@ const JobPage = () => {
                     <>
                         {(index + 1) + (meta.current - 1) * (meta.pageSize)}
                     </>)
-            }
-        },
-        {
-            title: 'Id',
-            dataIndex: '_id',
-            width: 250,
+            },
             hideInSearch: true,
         },
         {
@@ -73,6 +68,10 @@ const JobPage = () => {
             },
         },
         {
+            title: 'Level',
+            dataIndex: 'level',
+        },
+        {
             title: 'Trạng thái',
             dataIndex: 'isActive',
             render(dom, entity, index, action, schema) {
@@ -82,6 +81,7 @@ const JobPage = () => {
                     </Tag>
                 </>
             },
+            hideInSearch: true,
         },
 
         {
