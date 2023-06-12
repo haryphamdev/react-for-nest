@@ -1,37 +1,30 @@
 import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchUser } from "@/redux/slice/userSlide";
-import { IUser } from "@/types/backend";
+import { IJob } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Popconfirm, Space, message, notification } from "antd";
+import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
-import { callDeleteUser } from "@/config/api";
+import { callDeleteJob } from "@/config/api";
 import queryString from 'query-string';
-import ModalUser from "@/components/admin/user/modal.user";
-import ViewDetailUser from "@/components/admin/user/view.user";
 import { useNavigate } from "react-router-dom";
+import { fetchJob } from "@/redux/slice/jobSlide";
 
 const JobPage = () => {
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [dataInit, setDataInit] = useState<IUser | null>(null);
-    const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
-
     const tableRef = useRef<ActionType>();
 
-    const isFetching = useAppSelector(state => state.user.isFetching);
-    const meta = useAppSelector(state => state.user.meta);
-    const users = useAppSelector(state => state.user.result);
+    const isFetching = useAppSelector(state => state.job.isFetching);
+    const meta = useAppSelector(state => state.job.meta);
+    const jobs = useAppSelector(state => state.job.result);
     const dispatch = useAppDispatch();
-
     const navigate = useNavigate();
 
-    const handleDeleteUser = async (_id: string | undefined) => {
+    const handleDeleteJob = async (_id: string | undefined) => {
         if (_id) {
-            const res = await callDeleteUser(_id);
+            const res = await callDeleteJob(_id);
             if (res && res.data) {
-                message.success('Xóa User thành công');
+                message.success('Xóa Job thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -46,32 +39,49 @@ const JobPage = () => {
         tableRef?.current?.reload();
     }
 
-    const columns: ProColumns<IUser>[] = [
+    const columns: ProColumns<IJob>[] = [
+        {
+            title: 'STT',
+            key: 'index',
+            width: 50,
+            align: "center",
+            render: (text, record, index) => {
+                return (
+                    <>
+                        {(index + 1) + (meta.current - 1) * (meta.pageSize)}
+                    </>)
+            }
+        },
         {
             title: 'Id',
             dataIndex: '_id',
             width: 250,
-            render: (text, record, index, action) => {
-                return (
-                    <a href="#" onClick={() => {
-                        setOpenViewDetail(true);
-                        setDataInit(record);
-                    }}>
-                        {record._id}
-                    </a>
-                )
-            },
             hideInSearch: true,
         },
         {
-            title: 'Name',
+            title: 'Tên Job',
             dataIndex: 'name',
             sorter: true,
         },
         {
-            title: 'Email',
-            dataIndex: 'email',
+            title: 'Mức lương',
+            dataIndex: 'salary',
             sorter: true,
+            render(dom, entity, index, action, schema) {
+                const str = "" + entity.salary;
+                return <>{str?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</>
+            },
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'isActive',
+            render(dom, entity, index, action, schema) {
+                return <>
+                    <Tag color={entity.isActive ? "lime" : "red"} >
+                        {entity.isActive ? "ACTIVE" : "INACTIVE"}
+                    </Tag>
+                </>
+            },
         },
 
         {
@@ -112,16 +122,16 @@ const JobPage = () => {
                         }}
                         type=""
                         onClick={() => {
-                            setOpenModal(true);
-                            setDataInit(entity);
+                            // setOpenModal(true);
+                            // setDataInit(entity);
                         }}
                     />
 
                     <Popconfirm
                         placement="leftTop"
-                        title={"Xác nhận xóa user"}
-                        description={"Bạn có chắc chắn muốn xóa user này ?"}
-                        onConfirm={() => handleDeleteUser(entity._id)}
+                        title={"Xác nhận xóa job"}
+                        description={"Bạn có chắc chắn muốn xóa job này ?"}
+                        onConfirm={() => handleDeleteJob(entity._id)}
                         okText="Xác nhận"
                         cancelText="Hủy"
                     >
@@ -143,7 +153,7 @@ const JobPage = () => {
     const buildQuery = (params: any, sort: any, filter: any) => {
         const clone = { ...params };
         if (clone.name) clone.name = `/${clone.name}/i`;
-        if (clone.email) clone.email = `/${clone.email}/i`;
+        if (clone.salary) clone.salary = `/${clone.salary}/i`;
 
         let temp = queryString.stringify(clone);
 
@@ -151,8 +161,8 @@ const JobPage = () => {
         if (sort && sort.name) {
             sortBy = sort.name === 'ascend' ? "sort=name" : "sort=-name";
         }
-        if (sort && sort.email) {
-            sortBy = sort.email === 'ascend' ? "sort=email" : "sort=-email";
+        if (sort && sort.salary) {
+            sortBy = sort.salary === 'ascend' ? "sort=salary" : "sort=-salary";
         }
         if (sort && sort.createdAt) {
             sortBy = sort.createdAt === 'ascend' ? "sort=createdAt" : "sort=-createdAt";
@@ -173,16 +183,16 @@ const JobPage = () => {
 
     return (
         <div>
-            <DataTable<IUser>
+            <DataTable<IJob>
                 actionRef={tableRef}
                 headerTitle="Danh sách Jobs"
                 rowKey="_id"
                 loading={isFetching}
                 columns={columns}
-                dataSource={users}
+                dataSource={jobs}
                 request={async (params, sort, filter): Promise<any> => {
                     const query = buildQuery(params, sort, filter);
-                    dispatch(fetchUser({ query }))
+                    dispatch(fetchJob({ query }))
                 }}
                 scroll={{ x: true }}
                 pagination={
@@ -207,19 +217,6 @@ const JobPage = () => {
                         </Button>
                     );
                 }}
-            />
-            <ModalUser
-                openModal={openModal}
-                setOpenModal={setOpenModal}
-                reloadTable={reloadTable}
-                dataInit={dataInit}
-                setDataInit={setDataInit}
-            />
-            <ViewDetailUser
-                onClose={setOpenViewDetail}
-                open={openViewDetail}
-                dataInit={dataInit}
-                setDataInit={setDataInit}
             />
         </div>
     )

@@ -1,7 +1,7 @@
 import { Breadcrumb, Col, Divider, Row } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { DebounceSelect } from "../user/debouce.select";
-import { ProCard, ProForm, ProFormDatePicker, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
+import { FooterToolbar, ProCard, ProForm, ProFormDatePicker, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
 import styles from 'styles/admin.module.scss';
 import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
 import { ICompanySelect } from "../user/modal.user";
@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import { callFetchCompany } from "@/config/api";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { CheckSquareOutlined } from "@ant-design/icons";
 
 const ViewUpsertJob = (props: any) => {
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
@@ -57,7 +58,11 @@ const ViewUpsertJob = (props: any) => {
                                 resetText: "Hủy",
                                 submitText: "Lưu Job"
                             },
-                            onReset: () => navigate('/admin/job')
+                            onReset: () => navigate('/admin/job'),
+                            render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
+                            submitButtonProps: {
+                                icon: <CheckSquareOutlined />
+                            },
                         }
                     }
 
@@ -210,7 +215,6 @@ const ViewUpsertJob = (props: any) => {
                             </ProForm.Item>
                         </Col>
                     </Row>
-                    <Divider />
                 </ProForm>
             </div>
         </div>
