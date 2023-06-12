@@ -122,8 +122,7 @@ const JobPage = () => {
                         }}
                         type=""
                         onClick={() => {
-                            // setOpenModal(true);
-                            // setDataInit(entity);
+                            navigate(`/admin/job/upsert?id=${entity._id}`)
                         }}
                     />
 
@@ -210,7 +209,6 @@ const JobPage = () => {
                         <Button
                             icon={<PlusOutlined />}
                             type="primary"
-                            // onClick={() => setOpenModal(true)}
                             onClick={() => navigate('upsert')}
                         >
                             Thêm mới

@@ -1,22 +1,30 @@
-import { Breadcrumb, Col, ConfigProvider, Divider, Row, message, notification } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Breadcrumb, Col, ConfigProvider, Divider, Form, Row, message, notification } from "antd";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { DebounceSelect } from "../user/debouce.select";
 import { FooterToolbar, ProForm, ProFormDatePicker, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from "@ant-design/pro-components";
 import styles from 'styles/admin.module.scss';
 import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
 import { ICompanySelect } from "../user/modal.user";
 import { useState, useEffect } from 'react';
-import { callCreateJob, callFetchCompany } from "@/config/api";
+import { callCreateJob, callFetchCompany, callFetchJobById } from "@/config/api";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CheckSquareOutlined } from "@ant-design/icons";
 import enUS from 'antd/lib/locale/en_US';
 import dayjs from 'dayjs';
+import { IJob } from "@/types/backend";
 
 const ViewUpsertJob = (props: any) => {
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
+
     const navigate = useNavigate();
     const [value, setValue] = useState<string>("");
+
+    let location = useLocation();
+    let params = new URLSearchParams(location.search);
+    const id = params?.get("id"); // job id
+    const [dataUpdate, setDataUpdate] = useState<IJob | null>(null);
+    const [form] = Form.useForm()
 
     // Usage of DebounceSelect
     async function fetchCompanyList(name: string): Promise<ICompanySelect[]> {
@@ -34,37 +42,73 @@ const ViewUpsertJob = (props: any) => {
     }
 
     const onFinish = async (values: any) => {
-        const cp = values?.company?.value?.split('@#$');
-        const job = {
-            name: values.name,
-            skills: values.skills,
-            company: {
-                _id: cp && cp.length > 0 ? cp[0] : "",
-                name: values.company.label,
-                logo: cp && cp.length > 1 ? cp[1] : ""
-            },
-            location: values.location,
-            salary: values.salary,
-            quantity: values.quantity,
-            level: values.level,
-            description: value,
-            startDate: dayjs(values.startDate, 'DD/MM/YYYY').toDate(),
-            endDate: dayjs(values.endDate, 'DD/MM/YYYY').toDate(),
-            isActive: values.isActive
-        }
+        console.log(">>> check values: ", values)
+        if (dataUpdate?._id) {
+            //update
 
-        const res = await callCreateJob(job);
-        if (res.data) {
-            message.success("Tạo mới job thành công");
-            navigate('/admin/job')
         } else {
-            notification.error({
-                message: 'Có lỗi xảy ra',
-                description: res.message
-            });
-        }
+            //create
+            const cp = values?.company?.value?.split('@#$');
+            const job = {
+                name: values.name,
+                skills: values.skills,
+                company: {
+                    _id: cp && cp.length > 0 ? cp[0] : "",
+                    name: values.company.label,
+                    logo: cp && cp.length > 1 ? cp[1] : ""
+                },
+                location: values.location,
+                salary: values.salary,
+                quantity: values.quantity,
+                level: values.level,
+                description: value,
+                startDate: dayjs(values.startDate, 'DD/MM/YYYY').toDate(),
+                endDate: dayjs(values.endDate, 'DD/MM/YYYY').toDate(),
+                isActive: values.isActive
+            }
 
+            const res = await callCreateJob(job);
+            if (res.data) {
+                message.success("Tạo mới job thành công");
+                navigate('/admin/job')
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
+        }
     }
+
+    useEffect(() => {
+        const init = async () => {
+            if (id) {
+                const res = await callFetchJobById(id);
+                if (res && res.data) {
+                    setDataUpdate(res.data);
+                    setValue(res.data.description);
+                    setCompanies([
+                        {
+                            label: res.data.company?.name as string,
+                            value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
+                            key: res.data.company?._id
+                        }
+                    ])
+
+                    form.setFieldsValue({
+                        ...res.data,
+                        company: {
+                            label: res.data.company?.name as string,
+                            value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
+                            key: res.data.company?._id
+                        }
+                    })
+                }
+            }
+        }
+        init();
+        return () => form.resetFields()
+    }, [id])
 
     return (
         <div className={styles["upsert-job-container"]}>
@@ -82,14 +126,16 @@ const ViewUpsertJob = (props: any) => {
                 />
             </div>
             <div >
+
                 <ConfigProvider locale={enUS}>
                     <ProForm
+                        form={form}
                         onFinish={onFinish}
                         submitter={
                             {
                                 searchConfig: {
                                     resetText: "Hủy",
-                                    submitText: "Lưu Job"
+                                    submitText: <>{dataUpdate?._id ? "Cập nhật Job" : "Tạo mới Job"}</>
                                 },
                                 onReset: () => navigate('/admin/job'),
                                 render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
@@ -171,30 +217,31 @@ const ViewUpsertJob = (props: any) => {
                                 />
                             </Col>
 
+                            {(dataUpdate?._id || !id) &&
+                                <Col span={24} md={6}>
+                                    <ProForm.Item
+                                        name="company"
+                                        label="Thuộc Công Ty"
+                                        rules={[{ required: true, message: 'Vui lòng chọn company!' }]}
+                                    >
+                                        <DebounceSelect
+                                            allowClear
+                                            showSearch
+                                            defaultValue={companies}
+                                            value={companies}
+                                            placeholder="Chọn công ty"
+                                            fetchOptions={fetchCompanyList}
+                                            onChange={(newValue: any) => {
+                                                if (newValue?.length === 0 || newValue?.length === 1) {
+                                                    setCompanies(newValue as ICompanySelect[]);
+                                                }
+                                            }}
+                                            style={{ width: '100%' }}
+                                        />
+                                    </ProForm.Item>
 
-                            <Col span={24} md={6}>
-                                <ProForm.Item
-                                    name="company"
-                                    label="Thuộc Công Ty"
-                                    rules={[{ required: true, message: 'Vui lòng chọn company!' }]}
-                                >
-                                    <DebounceSelect
-                                        allowClear
-                                        showSearch
-                                        defaultValue={companies}
-                                        value={companies}
-                                        placeholder="Chọn công ty"
-                                        fetchOptions={fetchCompanyList}
-                                        onChange={(newValue: any) => {
-                                            if (newValue?.length === 0 || newValue?.length === 1) {
-                                                setCompanies(newValue as ICompanySelect[]);
-                                            }
-                                        }}
-                                        style={{ width: '100%' }}
-                                    />
-                                </ProForm.Item>
-
-                            </Col>
+                                </Col>
+                            }
 
                         </Row>
                         <Row gutter={[20, 20]}>
@@ -254,6 +301,7 @@ const ViewUpsertJob = (props: any) => {
                         <Divider />
                     </ProForm>
                 </ConfigProvider>
+
             </div>
         </div>
     )

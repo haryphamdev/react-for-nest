@@ -69,7 +69,9 @@ export interface IJob {
     company?: {
         _id: string;
         name: string;
+        logo?: string;
     }
+    location: string;
     salary: number;
     quantity: number;
     level: string;
