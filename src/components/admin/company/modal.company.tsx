@@ -190,7 +190,7 @@ const ModalCompany = (props: IProps) => {
                         onFinish={submitCompany}
                         initialValues={dataInit?._id ? dataInit : {}}
                         submitter={{
-                            render: (_, dom) => <FooterToolbar>{dom}</FooterToolbar>,
+                            render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
                             submitButtonProps: {
                                 icon: <CheckSquareOutlined />
                             },

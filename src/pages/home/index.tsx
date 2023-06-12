@@ -31,7 +31,7 @@ const HomePage = () => {
     }, [])
 
     return (
-        <div style={{ height: 1500 }} className={`${styles["container"]} ${styles["home-section"]}`}>
+        <div className={`${styles["container"]} ${styles["home-section"]}`}>
             <div className="search-content" style={{ marginTop: 20 }}>
                 <SearchClient />
             </div>
@@ -50,12 +50,17 @@ const HomePage = () => {
                                 <Card
                                     style={{ height: 350 }}
                                     hoverable
-                                    cover={<img alt="example"
-                                        src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.logo}`}
-                                    />
+                                    cover={
+                                        <div className={styles["card-customize"]} >
+                                            <img
+                                                alt="example"
+                                                src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.logo}`}
+                                            />
+                                        </div>
                                     }
                                 >
-                                    <p>{item.name}</p>
+                                    <Divider />
+                                    <h3 style={{ textAlign: "center" }}>{item.name}</h3>
                                 </Card>
                             </Col>
                         )
