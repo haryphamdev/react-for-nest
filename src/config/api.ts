@@ -25,17 +25,36 @@ export const callLogout = () => {
     return axios.post<IBackendRes<string>>('/api/v1/auth/logout')
 }
 
+/**
+ * Upload single file
+ */
+export const callUploadSingleFile = (file: any, folderType: string) => {
+    const bodyFormData = new FormData();
+    bodyFormData.append('fileUpload', file);
+    return axios<IBackendRes<{ fileName: string }>>({
+        method: 'post',
+        url: '/api/v1/files/upload',
+        data: bodyFormData,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "folder_type": folderType
+        },
+    });
+}
+
+
+
 
 /**
  * 
 Module Company
  */
-export const callCreateCompany = (name: string, address: string, description: string) => {
-    return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, description })
+export const callCreateCompany = (name: string, address: string, description: string, logo: string) => {
+    return axios.post<IBackendRes<ICompany>>('/api/v1/companies', { name, address, description, logo })
 }
 
-export const callUpdateCompany = (id: string, name: string, address: string, description: string) => {
-    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`, { name, address, description })
+export const callUpdateCompany = (id: string, name: string, address: string, description: string, logo: string) => {
+    return axios.patch<IBackendRes<ICompany>>(`/api/v1/companies/${id}`, { name, address, description, logo })
 }
 
 export const callDeleteCompany = (id: string) => {
