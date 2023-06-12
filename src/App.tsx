@@ -25,6 +25,7 @@ import UserPage from './pages/admin/user';
 import { fetchAccount } from './redux/slice/accountSlide';
 import LayoutApp from './components/share/layout.app';
 import JobPage from './pages/admin/job';
+import ViewUpsertJob from './components/admin/job/upsert.job';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -102,10 +103,16 @@ export default function App() {
 
         {
           path: "job",
-          element:
-            <ProtectedRoute>
-              <JobPage />
-            </ProtectedRoute>
+          children: [
+            {
+              index: true,
+              element: <ProtectedRoute> <JobPage /></ProtectedRoute>
+            },
+            {
+              path: "upsert", element:
+                <ProtectedRoute><ViewUpsertJob /></ProtectedRoute>
+            }
+          ]
         },
 
         {
@@ -146,16 +153,7 @@ export default function App() {
 
   return (
     <>
-      {
-        // isLoading === false
-        //   || window.location.pathname === '/login'
-        //   || window.location.pathname === '/register'
-        //   || window.location.pathname === '/'
-        //   ?
-        <RouterProvider router={router} />
-        // :
-        // <Loading />
-      }
+      <RouterProvider router={router} />
     </>
   )
 }

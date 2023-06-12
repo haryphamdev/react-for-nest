@@ -14,7 +14,7 @@ interface IProps {
     reloadTable: () => void;
 }
 
-interface ICompanySelect {
+export interface ICompanySelect {
     label: string;
     value: string;
     key?: string;

@@ -11,6 +11,7 @@ import { callDeleteUser } from "@/config/api";
 import queryString from 'query-string';
 import ModalUser from "@/components/admin/user/modal.user";
 import ViewDetailUser from "@/components/admin/user/view.user";
+import { useNavigate } from "react-router-dom";
 
 const JobPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -23,6 +24,8 @@ const JobPage = () => {
     const meta = useAppSelector(state => state.user.meta);
     const users = useAppSelector(state => state.user.result);
     const dispatch = useAppDispatch();
+
+    const navigate = useNavigate();
 
     const handleDeleteUser = async (_id: string | undefined) => {
         if (_id) {
@@ -197,7 +200,8 @@ const JobPage = () => {
                         <Button
                             icon={<PlusOutlined />}
                             type="primary"
-                            onClick={() => setOpenModal(true)}
+                            // onClick={() => setOpenModal(true)}
+                            onClick={() => navigate('upsert')}
                         >
                             Thêm mới
                         </Button>
