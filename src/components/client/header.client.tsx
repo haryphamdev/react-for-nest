@@ -21,7 +21,7 @@ const Header = (props: any) => {
 
     const items: MenuProps['items'] = [
         {
-            label: 'Trang Chủ',
+            label: <Link to={''}>Trang Chủ</Link>,
             key: 'home',
             icon: <TwitterOutlined />,
         },
@@ -31,7 +31,7 @@ const Header = (props: any) => {
             icon: <CodeOutlined />,
         },
         {
-            label: <Link to={'job'}>Top Công ty IT</Link>,
+            label: <Link to={'company'}>Top Công ty IT</Link>,
             key: 'company',
             icon: <RiseOutlined />,
         }

@@ -123,7 +123,7 @@
     }
 }
 
-.home-section {
+.card-job-section {
     .empty {
         display: flex;
         justify-content: center;
@@ -141,18 +141,6 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-    }
-
-    .company-content {
-        padding-top: 50px;
-
-        .card-customize {
-            height: 200px;
-            width: 200px;
-            margin: 20px auto;
-        }
-
-
     }
 
     .job-content {
@@ -201,6 +189,41 @@
             }
         }
     }
+}
+
+.home-section {
+
+    .empty {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        padding: 50px;
+    }
+
+    .dflex-mobile {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .dflex-pc {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .company-content {
+        padding-top: 50px;
+
+        .card-customize {
+            height: 200px;
+            width: 200px;
+            margin: 20px auto;
+        }
+
+
+    }
+
 
     .title {
         font-size: 27px;
