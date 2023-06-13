@@ -1,5 +1,5 @@
 import { callFetchJob } from '@/config/api';
-import { LOCATION_LIST, convertSlug } from '@/config/utils';
+import { LOCATION_LIST, convertSlug, getLocationName } from '@/config/utils';
 import { IJob } from '@/types/backend';
 import { EnvironmentOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Card, Col, Empty, Pagination, Row, Spin } from 'antd';
@@ -50,11 +50,7 @@ const JobCard = (props: IProps) => {
         setIsLoading(false)
     }
 
-    const getLocationName = (value: string) => {
-        const locationFilter = LOCATION_LIST.filter(item => item.value === value);
-        if (locationFilter.length) return locationFilter[0].label;
-        return 'unknown'
-    }
+
 
     const handleOnchangePage = (pagination: { current: number, pageSize: number }) => {
         if (pagination && pagination.current !== current) {
