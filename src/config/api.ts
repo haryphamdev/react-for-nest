@@ -94,8 +94,8 @@ export const callCreateJob = (job: IJob) => {
     return axios.post<IBackendRes<IJob>>('/api/v1/jobs', { ...job })
 }
 
-export const callUpdateJob = (job: IJob) => {
-    return axios.patch<IBackendRes<IJob>>(`/api/v1/jobs`, { ...job })
+export const callUpdateJob = (job: IJob, id: string) => {
+    return axios.patch<IBackendRes<IJob>>(`/api/v1/jobs/${id}`, { ...job })
 }
 
 export const callDeleteJob = (id: string) => {

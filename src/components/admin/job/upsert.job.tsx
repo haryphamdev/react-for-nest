@@ -6,7 +6,7 @@ import styles from 'styles/admin.module.scss';
 import { LOCATION_LIST, SKILLS_LIST } from "@/config/utils";
 import { ICompanySelect } from "../user/modal.user";
 import { useState, useEffect } from 'react';
-import { callCreateJob, callFetchCompany, callFetchJobById } from "@/config/api";
+import { callCreateJob, callFetchCompany, callFetchJobById, callUpdateJob } from "@/config/api";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { CheckSquareOutlined } from "@ant-design/icons";
@@ -24,7 +24,38 @@ const ViewUpsertJob = (props: any) => {
     let params = new URLSearchParams(location.search);
     const id = params?.get("id"); // job id
     const [dataUpdate, setDataUpdate] = useState<IJob | null>(null);
-    const [form] = Form.useForm()
+    const [form] = Form.useForm();
+
+    useEffect(() => {
+        const init = async () => {
+            if (id) {
+                const res = await callFetchJobById(id);
+                if (res && res.data) {
+                    setDataUpdate(res.data);
+                    setValue(res.data.description);
+                    setCompanies([
+                        {
+                            label: res.data.company?.name as string,
+                            value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
+                            key: res.data.company?._id
+                        }
+                    ])
+
+                    form.setFieldsValue({
+                        ...res.data,
+                        company: {
+                            label: res.data.company?.name as string,
+                            value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
+                            key: res.data.company?._id
+                        },
+
+                    })
+                }
+            }
+        }
+        init();
+        return () => form.resetFields()
+    }, [id])
 
     // Usage of DebounceSelect
     async function fetchCompanyList(name: string): Promise<ICompanySelect[]> {
@@ -42,10 +73,37 @@ const ViewUpsertJob = (props: any) => {
     }
 
     const onFinish = async (values: any) => {
-        console.log(">>> check values: ", values)
         if (dataUpdate?._id) {
             //update
+            const cp = values?.company?.value?.split('@#$');
+            const job = {
+                name: values.name,
+                skills: values.skills,
+                company: {
+                    _id: cp && cp.length > 0 ? cp[0] : "",
+                    name: values.company.label,
+                    logo: cp && cp.length > 1 ? cp[1] : ""
+                },
+                location: values.location,
+                salary: values.salary,
+                quantity: values.quantity,
+                level: values.level,
+                description: value,
+                startDate: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.startDate) ? dayjs(values.startDate, 'DD/MM/YYYY').toDate() : values.startDate,
+                endDate: /[0-9]{2}[/][0-9]{2}[/][0-9]{4}$/.test(values.endDate) ? dayjs(values.endDate, 'DD/MM/YYYY').toDate() : values.endDate,
+                isActive: values.isActive
+            }
 
+            const res = await callUpdateJob(job, dataUpdate._id);
+            if (res.data) {
+                message.success("Cập nhật job thành công");
+                navigate('/admin/job')
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
         } else {
             //create
             const cp = values?.company?.value?.split('@#$');
@@ -80,35 +138,7 @@ const ViewUpsertJob = (props: any) => {
         }
     }
 
-    useEffect(() => {
-        const init = async () => {
-            if (id) {
-                const res = await callFetchJobById(id);
-                if (res && res.data) {
-                    setDataUpdate(res.data);
-                    setValue(res.data.description);
-                    setCompanies([
-                        {
-                            label: res.data.company?.name as string,
-                            value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
-                            key: res.data.company?._id
-                        }
-                    ])
 
-                    form.setFieldsValue({
-                        ...res.data,
-                        company: {
-                            label: res.data.company?.name as string,
-                            value: `${res.data.company?._id}@#$${res.data.company?.logo}` as string,
-                            key: res.data.company?._id
-                        }
-                    })
-                }
-            }
-        }
-        init();
-        return () => form.resetFields()
-    }, [id])
 
     return (
         <div className={styles["upsert-job-container"]}>
@@ -249,7 +279,7 @@ const ViewUpsertJob = (props: any) => {
                                 <ProFormDatePicker
                                     label="Ngày bắt đầu"
                                     name="startDate"
-                                    // normalize={(value) => value && moment(value).format('YYYY-MM-DD')}
+                                    normalize={(value) => value && dayjs(value, 'DD/MM/YYYY')}
                                     fieldProps={{
                                         format: 'DD/MM/YYYY',
 
@@ -262,7 +292,7 @@ const ViewUpsertJob = (props: any) => {
                                 <ProFormDatePicker
                                     label="Ngày kết thúc"
                                     name="endDate"
-                                    // normalize={(value) => value && moment(value).format('YYYY-MM-DD')}
+                                    normalize={(value) => value && dayjs(value, 'DD/MM/YYYY')}
                                     fieldProps={{
                                         format: 'DD/MM/YYYY',
 
