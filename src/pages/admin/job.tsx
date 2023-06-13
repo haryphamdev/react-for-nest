@@ -2,8 +2,8 @@ import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IJob } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
+import { ActionType, ProColumns, ProFormSelect } from '@ant-design/pro-components';
+import { Button, Popconfirm, Select, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import { callDeleteJob } from "@/config/api";
@@ -70,6 +70,21 @@ const JobPage = () => {
         {
             title: 'Level',
             dataIndex: 'level',
+            renderFormItem: (item, props, form) => (
+                <ProFormSelect
+                    showSearch
+                    mode="multiple"
+                    allowClear
+                    valueEnum={{
+                        INTERN: 'INTERN',
+                        FRESHER: 'FRESHER',
+                        JUNIOR: 'JUNIOR',
+                        MIDDLE: 'MIDDLE',
+                        SENIOR: 'SENIOR',
+                    }}
+                    placeholder="Chọn level"
+                />
+            ),
         },
         {
             title: 'Trạng thái',
@@ -153,6 +168,9 @@ const JobPage = () => {
         const clone = { ...params };
         if (clone.name) clone.name = `/${clone.name}/i`;
         if (clone.salary) clone.salary = `/${clone.salary}/i`;
+        if (clone?.level?.length) {
+            clone.level = clone.level.join(",");
+        }
 
         let temp = queryString.stringify(clone);
 

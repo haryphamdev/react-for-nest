@@ -6,6 +6,11 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ICompany, IJob } from '@/types/backend';
 import { callFetchCompany, callFetchJob } from '@/config/api';
+import { LOCATION_LIST } from '@/config/utils';
+import { EnvironmentOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+dayjs.extend(relativeTime)
 
 const HomePage = () => {
 
@@ -29,6 +34,12 @@ const HomePage = () => {
         }
         initData();
     }, [])
+
+    const getLocationName = (value: string) => {
+        const locationFilter = LOCATION_LIST.filter(item => item.value === value);
+        if (locationFilter.length) return locationFilter[0].label;
+        return 'unknown'
+    }
 
     return (
         <div className={`${styles["container"]} ${styles["home-section"]}`}>
@@ -79,7 +90,7 @@ const HomePage = () => {
                 </Row>
             </div>
             <Divider />
-            <div className={styles["section-job"]}>
+            <div className={styles["job-content"]}>
                 <Row gutter={[20, 20]}>
                     <Col span={24}>
                         <div className={isMobile ? styles["dflex-mobile"] : styles["dflex-pc"]}>
@@ -91,13 +102,22 @@ const HomePage = () => {
                     {displayJob?.map(item => {
                         return (
                             <Col span={24} md={12} key={item._id}>
-                                <Card size="small" title={item.name} hoverable>
-                                    <div>
-
+                                <Card size="small" title={null} hoverable>
+                                    <div className={styles["card-job-content"]}>
+                                        <div className={styles["card-job-left"]}>
+                                            <img
+                                                alt="example"
+                                                src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.company?.logo}`}
+                                            />
+                                        </div>
+                                        <div className={styles["card-job-right"]}>
+                                            <div className={styles["job-title"]}>{item.name}</div>
+                                            <div className={styles["job-location"]}><EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{getLocationName(item.location)}</div>
+                                            <div><ThunderboltOutlined style={{ color: 'orange' }} />&nbsp;{(item.salary + "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</div>
+                                            <div className={styles["job-updatedAt"]}>{dayjs(item.updatedAt).fromNow()}</div>
+                                        </div>
                                     </div>
-                                    <p>Card content</p>
-                                    <p>Card content</p>
-                                    <p>Card content</p>
+
                                 </Card>
                             </Col>
                         )
