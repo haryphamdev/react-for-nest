@@ -24,7 +24,7 @@ const ApplyModal = (props: IProps) => {
     const navigate = useNavigate();
 
     const handleOkButton = async () => {
-        if (!urlCV) {
+        if (!urlCV && isAuthenticated) {
             message.error("Vui lòng upload CV!");
             return;
         }
