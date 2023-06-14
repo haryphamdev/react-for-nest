@@ -87,6 +87,7 @@ const ViewDetailResume = (props: IProps) => {
                     </Descriptions.Item>
                     <Descriptions.Item label="Tên Job">
                         {dataInit?.jobId?.name}
+
                     </Descriptions.Item>
                     <Descriptions.Item label="Tên Công Ty">
                         {dataInit?.companyId?.name}
