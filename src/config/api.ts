@@ -65,6 +65,10 @@ export const callFetchCompany = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<ICompany>>>(`/api/v1/companies?${query}`);
 }
 
+export const callFetchCompanyById = (id: string) => {
+    return axios.get<IBackendRes<ICompany>>(`/api/v1/companies/${id}`);
+}
+
 
 /**
  * 
