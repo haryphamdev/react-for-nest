@@ -1,38 +1,34 @@
-import { callFetchJob } from '@/config/api';
-import { LOCATION_LIST, convertSlug } from '@/config/utils';
-import { IJob } from '@/types/backend';
-import { EnvironmentOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Card, Col, Empty, Pagination, Row, Spin } from 'antd';
+import { callFetchCompany } from '@/config/api';
+import { convertSlug } from '@/config/utils';
+import { ICompany } from '@/types/backend';
+import { Card, Col, Divider, Empty, Pagination, Row, Spin } from 'antd';
 import { useState, useEffect } from 'react';
 import { isMobile } from 'react-device-detect';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from 'styles/client.module.scss';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-dayjs.extend(relativeTime)
 
 interface IProps {
     showPagination?: boolean;
 }
 
-const JobCard = (props: IProps) => {
+const CompanyCard = (props: IProps) => {
     const { showPagination = false } = props;
 
-    const [displayJob, setDisplayJob] = useState<IJob[] | null>(null);
+    const [displayCompany, setDisplayCompany] = useState<ICompany[] | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const [current, setCurrent] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(4);
     const [total, setTotal] = useState(0);
     const [filter, setFilter] = useState("");
     const [sortQuery, setSortQuery] = useState("sort=-updatedAt");
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchJob();
+        fetchCompany();
     }, [current, pageSize, filter, sortQuery]);
 
-    const fetchJob = async () => {
+    const fetchCompany = async () => {
         setIsLoading(true)
         let query = `current=${current}&pageSize=${pageSize}`;
         if (filter) {
@@ -42,19 +38,14 @@ const JobCard = (props: IProps) => {
             query += `&${sortQuery}`;
         }
 
-        const res = await callFetchJob(query);
+        const res = await callFetchCompany(query);
         if (res && res.data) {
-            setDisplayJob(res.data.result);
+            setDisplayCompany(res.data.result);
             setTotal(res.data.meta.total)
         }
         setIsLoading(false)
     }
 
-    const getLocationName = (value: string) => {
-        const locationFilter = LOCATION_LIST.filter(item => item.value === value);
-        if (locationFilter.length) return locationFilter[0].label;
-        return 'unknown'
-    }
 
     const handleOnchangePage = (pagination: { current: number, pageSize: number }) => {
         if (pagination && pagination.current !== current) {
@@ -66,53 +57,51 @@ const JobCard = (props: IProps) => {
         }
     }
 
-    const handleViewDetailJob = (item: IJob) => {
-        const slug = convertSlug(item.name);
-        navigate(`/job/${slug}?id=${item._id}`)
+    const handleViewDetailJob = (item: ICompany) => {
+        if (item.name) {
+            const slug = convertSlug(item.name);
+            navigate(`/company/${slug}?id=${item._id}`)
+        }
     }
 
     return (
-        <div className={`${styles["card-job-section"]}`}>
-            <div className={`${styles["job-content"]}`}>
+        <div className={`${styles["company-section"]}`}>
+            <div className={styles["company-content"]}>
                 <Spin spinning={isLoading} tip="Loading...">
                     <Row gutter={[20, 20]}>
                         <Col span={24}>
                             <div className={isMobile ? styles["dflex-mobile"] : styles["dflex-pc"]}>
-                                <span className={styles["title"]}>Công Việc Mới Nhất</span>
+                                <span className={styles["title"]}>Nhà Tuyển Dụng Hàng Đầu</span>
                                 {!showPagination &&
-                                    <Link to="job">Xem tất cả</Link>
+                                    <Link to="company">Xem tất cả</Link>
                                 }
                             </div>
                         </Col>
 
-                        {displayJob?.map(item => {
+                        {displayCompany?.map(item => {
                             return (
-                                <Col span={24} md={12} key={item._id}>
-                                    <Card size="small" title={null} hoverable
+                                <Col span={24} md={6} key={item._id}>
+                                    <Card
                                         onClick={() => handleViewDetailJob(item)}
-                                    >
-                                        <div className={styles["card-job-content"]}>
-                                            <div className={styles["card-job-left"]}>
+                                        style={{ height: 350 }}
+                                        hoverable
+                                        cover={
+                                            <div className={styles["card-customize"]} >
                                                 <img
                                                     alt="example"
-                                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.company?.logo}`}
+                                                    src={`${import.meta.env.VITE_BACKEND_URL}/images/company/${item?.logo}`}
                                                 />
                                             </div>
-                                            <div className={styles["card-job-right"]}>
-                                                <div className={styles["job-title"]}>{item.name}</div>
-                                                <div className={styles["job-location"]}><EnvironmentOutlined style={{ color: '#58aaab' }} />&nbsp;{getLocationName(item.location)}</div>
-                                                <div><ThunderboltOutlined style={{ color: 'orange' }} />&nbsp;{(item.salary + "")?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</div>
-                                                <div className={styles["job-updatedAt"]}>{dayjs(item.updatedAt).fromNow()}</div>
-                                            </div>
-                                        </div>
-
+                                        }
+                                    >
+                                        <Divider />
+                                        <h3 style={{ textAlign: "center" }}>{item.name}</h3>
                                     </Card>
                                 </Col>
                             )
                         })}
 
-
-                        {(!displayJob || displayJob && displayJob.length === 0)
+                        {(!displayCompany || displayCompany && displayCompany.length === 0)
                             && !isLoading &&
                             <div className={styles["empty"]}>
                                 <Empty description="Không có dữ liệu" />
@@ -137,4 +126,4 @@ const JobCard = (props: IProps) => {
     )
 }
 
-export default JobCard;
+export default CompanyCard;

@@ -87,4 +87,21 @@ export interface IJob {
     updatedAt?: string;
 }
 
-
+export interface IResume {
+    _id?: string;
+    email: string;
+    userId: string;
+    url: string;
+    status: string;
+    companyId: string;
+    history?: {
+        status: string;
+        updatedAt: Date;
+        updatedBy: { _id: string; email: string }
+    }[]
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}

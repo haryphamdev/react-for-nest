@@ -191,6 +191,20 @@
     }
 }
 
+.company-section {
+    .company-content {
+        padding-top: 50px;
+
+        .card-customize {
+            height: 200px;
+            width: 200px;
+            margin: 20px auto;
+        }
+    }
+
+}
+
+
 .home-section {
 
     .empty {
@@ -211,19 +225,6 @@
         align-items: center;
         justify-content: space-between;
     }
-
-    .company-content {
-        padding-top: 50px;
-
-        .card-customize {
-            height: 200px;
-            width: 200px;
-            margin: 20px auto;
-        }
-
-
-    }
-
 
     .title {
         font-size: 27px;
