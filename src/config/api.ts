@@ -118,8 +118,8 @@ export const callFetchJobById = (id: string) => {
  * 
 Module Resume
  */
-export const callCreateResume = (resume: IResume) => {
-    return axios.post<IBackendRes<IResume>>('/api/v1/resumes', { ...resume })
+export const callCreateResume = (url: string, companyId: any, jobId: any) => {
+    return axios.post<IBackendRes<IResume>>('/api/v1/resumes', { url, companyId, jobId })
 }
 
 export const callUpdateResume = (resume: IResume, id: string) => {
@@ -136,4 +136,8 @@ export const callFetchResume = (query: string) => {
 
 export const callFetchResumeById = (id: string) => {
     return axios.get<IBackendRes<IResume>>(`/api/v1/resumes/${id}`);
+}
+
+export const callFetchResumeByUser = () => {
+    return axios.post<IBackendRes<IResume>>(`/api/v1/resumes/by-user`);
 }

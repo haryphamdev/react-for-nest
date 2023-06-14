@@ -1,30 +1,30 @@
 import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { IJob } from "@/types/backend";
+import { IResume } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns, ProFormSelect } from '@ant-design/pro-components';
 import { Button, Popconfirm, Select, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
-import { callDeleteJob } from "@/config/api";
+import { callDeleteResume } from "@/config/api";
 import queryString from 'query-string';
 import { useNavigate } from "react-router-dom";
-import { fetchJob } from "@/redux/slice/jobSlide";
+import { fetchResume } from "@/redux/slice/resumeSlide";
 
 const ResumePage = () => {
     const tableRef = useRef<ActionType>();
 
-    const isFetching = useAppSelector(state => state.job.isFetching);
-    const meta = useAppSelector(state => state.job.meta);
-    const jobs = useAppSelector(state => state.job.result);
+    const isFetching = useAppSelector(state => state.resume.isFetching);
+    const meta = useAppSelector(state => state.resume.meta);
+    const resumes = useAppSelector(state => state.resume.result);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const handleDeleteJob = async (_id: string | undefined) => {
+    const handleDeleteResume = async (_id: string | undefined) => {
         if (_id) {
-            const res = await callDeleteJob(_id);
+            const res = await callDeleteResume(_id);
             if (res && res.data) {
-                message.success('Xóa Job thành công');
+                message.success('Xóa Resume thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -39,7 +39,7 @@ const ResumePage = () => {
         tableRef?.current?.reload();
     }
 
-    const columns: ProColumns<IJob>[] = [
+    const columns: ProColumns<IResume>[] = [
         {
             title: 'STT',
             key: 'index',
@@ -54,22 +54,14 @@ const ResumePage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Tên Job',
-            dataIndex: 'name',
+            title: 'Trạng Thái',
+            dataIndex: 'status',
             sorter: true,
         },
+
         {
-            title: 'Mức lương',
-            dataIndex: 'salary',
-            sorter: true,
-            render(dom, entity, index, action, schema) {
-                const str = "" + entity.salary;
-                return <>{str?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</>
-            },
-        },
-        {
-            title: 'Level',
-            dataIndex: 'level',
+            title: 'Job',
+            dataIndex: 'jobId',
             renderFormItem: (item, props, form) => (
                 <ProFormSelect
                     showSearch
@@ -87,16 +79,23 @@ const ResumePage = () => {
             ),
         },
         {
-            title: 'Trạng thái',
-            dataIndex: 'isActive',
-            render(dom, entity, index, action, schema) {
-                return <>
-                    <Tag color={entity.isActive ? "lime" : "red"} >
-                        {entity.isActive ? "ACTIVE" : "INACTIVE"}
-                    </Tag>
-                </>
-            },
-            hideInSearch: true,
+            title: 'Company',
+            dataIndex: 'companyId',
+            renderFormItem: (item, props, form) => (
+                <ProFormSelect
+                    showSearch
+                    mode="multiple"
+                    allowClear
+                    valueEnum={{
+                        INTERN: 'INTERN',
+                        FRESHER: 'FRESHER',
+                        JUNIOR: 'JUNIOR',
+                        MIDDLE: 'MIDDLE',
+                        SENIOR: 'SENIOR',
+                    }}
+                    placeholder="Chọn level"
+                />
+            ),
         },
 
         {
@@ -123,45 +122,45 @@ const ResumePage = () => {
             },
             hideInSearch: true,
         },
-        {
+        // {
 
-            title: 'Actions',
-            hideInSearch: true,
-            width: 50,
-            render: (_value, entity, _index, _action) => (
-                <Space>
-                    <EditOutlined
-                        style={{
-                            fontSize: 20,
-                            color: '#ffa500',
-                        }}
-                        type=""
-                        onClick={() => {
-                            navigate(`/admin/job/upsert?id=${entity._id}`)
-                        }}
-                    />
+        //     title: 'Actions',
+        //     hideInSearch: true,
+        //     width: 50,
+        //     render: (_value, entity, _index, _action) => (
+        //         <Space>
+        //             <EditOutlined
+        //                 style={{
+        //                     fontSize: 20,
+        //                     color: '#ffa500',
+        //                 }}
+        //                 type=""
+        //                 onClick={() => {
+        //                     navigate(`/admin/job/upsert?id=${entity._id}`)
+        //                 }}
+        //             />
 
-                    <Popconfirm
-                        placement="leftTop"
-                        title={"Xác nhận xóa job"}
-                        description={"Bạn có chắc chắn muốn xóa job này ?"}
-                        onConfirm={() => handleDeleteJob(entity._id)}
-                        okText="Xác nhận"
-                        cancelText="Hủy"
-                    >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }}
-                            />
-                        </span>
-                    </Popconfirm>
-                </Space>
-            ),
+        //             <Popconfirm
+        //                 placement="leftTop"
+        //                 title={"Xác nhận xóa resume"}
+        //                 description={"Bạn có chắc chắn muốn xóa resume này ?"}
+        //                 onConfirm={() => handleDeleteResume(entity._id)}
+        //                 okText="Xác nhận"
+        //                 cancelText="Hủy"
+        //             >
+        //                 <span style={{ cursor: "pointer", margin: "0 10px" }}>
+        //                     <DeleteOutlined
+        //                         style={{
+        //                             fontSize: 20,
+        //                             color: '#ff4d4f',
+        //                         }}
+        //                     />
+        //                 </span>
+        //             </Popconfirm>
+        //         </Space>
+        //     ),
 
-        },
+        // },
     ];
 
     const buildQuery = (params: any, sort: any, filter: any) => {
@@ -200,16 +199,16 @@ const ResumePage = () => {
 
     return (
         <div>
-            <DataTable<IJob>
+            <DataTable<IResume>
                 actionRef={tableRef}
-                headerTitle="Danh sách Jobs"
+                headerTitle="Danh sách Resumes"
                 rowKey="_id"
                 loading={isFetching}
                 columns={columns}
-                dataSource={jobs}
+                dataSource={resumes}
                 request={async (params, sort, filter): Promise<any> => {
                     const query = buildQuery(params, sort, filter);
-                    dispatch(fetchJob({ query }))
+                    dispatch(fetchResume({ query }))
                 }}
                 scroll={{ x: true }}
                 pagination={

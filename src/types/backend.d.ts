@@ -94,6 +94,7 @@ export interface IResume {
     url: string;
     status: string;
     companyId: string;
+    jobId: string;
     history?: {
         status: string;
         updatedAt: Date;
