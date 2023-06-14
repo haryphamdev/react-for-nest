@@ -91,6 +91,7 @@ const ApplyModal = (props: IProps) => {
                 cancelButtonProps={
                     { style: { display: "none" } }
                 }
+                destroyOnClose={true}
             >
                 <Divider />
                 {isAuthenticated ?

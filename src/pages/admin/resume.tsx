@@ -10,6 +10,7 @@ import { callDeleteResume } from "@/config/api";
 import queryString from 'query-string';
 import { useNavigate } from "react-router-dom";
 import { fetchResume } from "@/redux/slice/resumeSlide";
+import ViewDetailResume from "@/components/admin/resume/view.resume";
 
 const ResumePage = () => {
     const tableRef = useRef<ActionType>();
@@ -18,7 +19,9 @@ const ResumePage = () => {
     const meta = useAppSelector(state => state.resume.meta);
     const resumes = useAppSelector(state => state.resume.result);
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
+
+    const [dataInit, setDataInit] = useState<IResume | null>(null);
+    const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
     const handleDeleteResume = async (_id: string | undefined) => {
         if (_id) {
@@ -41,15 +44,18 @@ const ResumePage = () => {
 
     const columns: ProColumns<IResume>[] = [
         {
-            title: 'STT',
-            key: 'index',
-            width: 50,
-            align: "center",
-            render: (text, record, index) => {
+            title: 'Id',
+            dataIndex: '_id',
+            width: 250,
+            render: (text, record, index, action) => {
                 return (
-                    <>
-                        {(index + 1) + (meta.current - 1) * (meta.pageSize)}
-                    </>)
+                    <a href="#" onClick={() => {
+                        setOpenViewDetail(true);
+                        setDataInit(record);
+                    }}>
+                        {record._id}
+                    </a>
+                )
             },
             hideInSearch: true,
         },
@@ -223,15 +229,16 @@ const ResumePage = () => {
                 rowSelection={false}
                 toolBarRender={(_action, _rows): any => {
                     return (
-                        <Button
-                            icon={<PlusOutlined />}
-                            type="primary"
-                            onClick={() => navigate('upsert')}
-                        >
-                            Thêm mới
-                        </Button>
+                        <></>
                     );
                 }}
+            />
+            <ViewDetailResume
+                open={openViewDetail}
+                onClose={setOpenViewDetail}
+                dataInit={dataInit}
+                setDataInit={setDataInit}
+                reloadTable={reloadTable}
             />
         </div>
     )
