@@ -63,45 +63,30 @@ const ResumePage = () => {
             title: 'Trạng Thái',
             dataIndex: 'status',
             sorter: true,
+            renderFormItem: (item, props, form) => (
+                <ProFormSelect
+                    showSearch
+                    mode="multiple"
+                    allowClear
+                    valueEnum={{
+                        PENDING: 'PENDING',
+                        REVIEWING: 'REVIEWING',
+                        APPROVED: 'APPROVED',
+                        REJECTED: 'REJECTED',
+                    }}
+                    placeholder="Chọn level"
+                />
+            ),
         },
 
         {
             title: 'Job',
-            dataIndex: 'jobId',
-            renderFormItem: (item, props, form) => (
-                <ProFormSelect
-                    showSearch
-                    mode="multiple"
-                    allowClear
-                    valueEnum={{
-                        INTERN: 'INTERN',
-                        FRESHER: 'FRESHER',
-                        JUNIOR: 'JUNIOR',
-                        MIDDLE: 'MIDDLE',
-                        SENIOR: 'SENIOR',
-                    }}
-                    placeholder="Chọn level"
-                />
-            ),
+            dataIndex: ["jobId", "name"],
+            hideInSearch: true,
         },
         {
             title: 'Company',
-            dataIndex: 'companyId',
-            renderFormItem: (item, props, form) => (
-                <ProFormSelect
-                    showSearch
-                    mode="multiple"
-                    allowClear
-                    valueEnum={{
-                        INTERN: 'INTERN',
-                        FRESHER: 'FRESHER',
-                        JUNIOR: 'JUNIOR',
-                        MIDDLE: 'MIDDLE',
-                        SENIOR: 'SENIOR',
-                    }}
-                    placeholder="Chọn level"
-                />
-            ),
+            dataIndex: ["companyId", "name"],
         },
 
         {
@@ -171,21 +156,19 @@ const ResumePage = () => {
 
     const buildQuery = (params: any, sort: any, filter: any) => {
         const clone = { ...params };
-        if (clone.name) clone.name = `/${clone.name}/i`;
-        if (clone.salary) clone.salary = `/${clone.salary}/i`;
-        if (clone?.level?.length) {
-            clone.level = clone.level.join(",");
+        // if (clone.name) clone.name = `/${clone.name}/i`;
+        // if (clone.salary) clone.salary = `/${clone.salary}/i`;
+        if (clone?.status?.length) {
+            clone.status = clone.status.join(",");
         }
 
         let temp = queryString.stringify(clone);
 
         let sortBy = "";
-        if (sort && sort.name) {
-            sortBy = sort.name === 'ascend' ? "sort=name" : "sort=-name";
+        if (sort && sort.status) {
+            sortBy = sort.status === 'ascend' ? "sort=status" : "sort=-status";
         }
-        if (sort && sort.salary) {
-            sortBy = sort.salary === 'ascend' ? "sort=salary" : "sort=-salary";
-        }
+
         if (sort && sort.createdAt) {
             sortBy = sort.createdAt === 'ascend' ? "sort=createdAt" : "sort=-createdAt";
         }
@@ -200,6 +183,7 @@ const ResumePage = () => {
             temp = `${temp}&${sortBy}`;
         }
 
+        temp += "&populate=companyId,jobId&fields=companyId._id, companyId.name, companyId.logo, jobId._id, jobId.name";
         return temp;
     }
 

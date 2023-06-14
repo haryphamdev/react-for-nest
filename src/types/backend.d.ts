@@ -93,8 +93,15 @@ export interface IResume {
     userId: string;
     url: string;
     status: string;
-    companyId: string;
-    jobId: string;
+    companyId: string | {
+        _id: string;
+        name: string;
+        logo: string;
+    };
+    jobId: string | {
+        _id: string;
+        name: string;
+    };
     history?: {
         status: string;
         updatedAt: Date;

@@ -8,7 +8,7 @@ const { Option } = Select;
 interface IProps {
     onClose: (v: boolean) => void;
     open: boolean;
-    dataInit: IResume | null;
+    dataInit: IResume | null | any;
     setDataInit: (v: any) => void;
     reloadTable: () => void;
 }
@@ -85,7 +85,12 @@ const ViewDetailResume = (props: IProps) => {
                         </Form>
 
                     </Descriptions.Item>
-
+                    <Descriptions.Item label="Tên Job">
+                        {dataInit?.jobId?.name}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Tên Công Ty">
+                        {dataInit?.companyId?.name}
+                    </Descriptions.Item>
                     <Descriptions.Item label="Ngày tạo">{dataInit && dataInit.createdAt ? dayjs(dataInit.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</Descriptions.Item>
                     <Descriptions.Item label="Ngày sửa">{dataInit && dataInit.updatedAt ? dayjs(dataInit.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</Descriptions.Item>
 
