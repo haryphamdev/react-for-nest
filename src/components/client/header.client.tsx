@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CodeOutlined, LogoutOutlined, MenuFoldOutlined, RiseOutlined, TwitterOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Dropdown, MenuProps, Space, message } from 'antd';
 import { Menu, ConfigProvider } from 'antd';
 import styles from '@/styles/client.module.scss';
 import { isMobile } from 'react-device-detect';
 import { FaReact } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { callLogout } from '@/config/api';
@@ -19,26 +19,32 @@ const Header = (props: any) => {
     const user = useAppSelector(state => state.account.user);
     const [openMobileMenu, setOpenMobileMenu] = useState<boolean>(false);
 
+    const [current, setCurrent] = useState('home');
+    const location = useLocation();
+
+    useEffect(() => {
+        setCurrent(location.pathname);
+    }, [location])
+
     const items: MenuProps['items'] = [
         {
-            label: <Link to={''}>Trang Chủ</Link>,
-            key: 'home',
+            label: <Link to={'/'}>Trang Chủ</Link>,
+            key: '/',
             icon: <TwitterOutlined />,
         },
         {
-            label: <Link to={'job'}>Việc Làm IT</Link>,
-            key: 'job',
+            label: <Link to={'/job'}>Việc Làm IT</Link>,
+            key: '/job',
             icon: <CodeOutlined />,
         },
         {
-            label: <Link to={'company'}>Top Công ty IT</Link>,
-            key: 'company',
+            label: <Link to={'/company'}>Top Công ty IT</Link>,
+            key: '/company',
             icon: <RiseOutlined />,
         }
     ];
 
 
-    const [current, setCurrent] = useState('home');
 
     const onClick: MenuProps['onClick'] = (e) => {
         console.log('click ', e);
@@ -88,7 +94,7 @@ const Header = (props: any) => {
                                 >
 
                                     <Menu
-                                        onClick={onClick}
+                                        // onClick={onClick}
                                         selectedKeys={[current]}
                                         mode="horizontal"
                                         items={items}
