@@ -113,3 +113,33 @@ export interface IResume {
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface IPermission {
+    _id?: string;
+    name: string;
+    apiPath: string;
+    method: string;
+    module: string;
+    isSelected?: boolean;
+
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+
+}
+
+export interface IRole {
+    _id?: string;
+    name: string;
+    description: string;
+    isActive: boolean;
+    permissions: IPermission[];
+
+    createdBy?: string;
+    isDeleted?: boolean;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}

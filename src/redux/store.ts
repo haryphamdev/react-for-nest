@@ -8,6 +8,8 @@ import companyReducer from './slice/companySlide';
 import userReducer from './slice/userSlide';
 import jobReducer from './slice/jobSlide';
 import resumeReducer from './slice/resumeSlide';
+import permissionReducer from './slice/permissionSlide';
+import roleReducer from './slice/roleSlide';
 
 export const store = configureStore({
   reducer: {
@@ -15,7 +17,9 @@ export const store = configureStore({
     company: companyReducer,
     user: userReducer,
     job: jobReducer,
-    resume: resumeReducer
+    resume: resumeReducer,
+    permission: permissionReducer,
+    role: roleReducer
   },
 });
 
