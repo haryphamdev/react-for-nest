@@ -27,6 +27,7 @@ interface IProps {
 
 const ModuleApi = (props: IProps) => {
   const { form, listPermissions } = props;
+  const [collapseOpen, setCollapseOpen] = useState<any[] | any>([])
 
   useEffect(() => {
     if (listPermissions && listPermissions?.length) {
@@ -41,13 +42,13 @@ const ModuleApi = (props: IProps) => {
     if (child) {
       child?.permissions?.forEach(item => {
         if (item._id)
-          form.setFieldValue(item._id, value)
+          form.setFieldValue(["permissions", item._id], value)
       })
     }
   }
 
   const handleSingleCheck = (value: boolean, child: string, parent: string) => {
-    form.setFieldValue(child, value);
+    form.setFieldValue(["permissions", child], value);
 
     //check all
     const temp = listPermissions?.find(item => item.module === parent);
@@ -55,7 +56,7 @@ const ModuleApi = (props: IProps) => {
       const restPermission = temp?.permissions?.filter(item => item._id !== child);
       if (restPermission && restPermission.length) {
         const allTrue = restPermission.every(item => form.getFieldValue((item._id) as string));
-        form.setFieldValue(parent, allTrue && value)
+        form.setFieldValue(["permissions", parent], allTrue && value)
       }
     }
   }
@@ -64,23 +65,23 @@ const ModuleApi = (props: IProps) => {
   return (
     <Card size="small" bordered={false}>
       <Collapse
+        onChange={setCollapseOpen}
       >
         {
           listPermissions?.map((item, index) => (
             <Panel
               header={<div>{item.module}</div>}
               key={index}
-              collapsible='header'
 
               extra={
-                <div className={'customize-form-item'}>
+                <div className={'customize-form-item'} hidden={!_.includes(collapseOpen, index + "")}>
                   <ProFormSwitch
-                    name={item.module}
+                    name={["permissions", item.module]}
                     fieldProps={{
                       defaultChecked: false,
-                      onChange: (v) => handleSwitchAll(v, item.module)
+                      onClick: (u, e) => { e.stopPropagation() },
+                      onChange: (v) => handleSwitchAll(v, item.module),
                     }}
-
                   />
                 </div>
               }
@@ -92,7 +93,7 @@ const ModuleApi = (props: IProps) => {
                       <Card size="small" bodyStyle={{ display: "flex", flex: 1, flexDirection: 'row' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                           <ProFormSwitch
-                            name={value._id}
+                            name={["permissions", value._id as string]}
                             fieldProps={{
                               defaultChecked: false,
                               onChange: (v) => handleSingleCheck(v, (value._id) as string, item.module)
@@ -103,7 +104,7 @@ const ModuleApi = (props: IProps) => {
                           <Tooltip title={value?.name}>
                             <p style={{ paddingLeft: 10, marginBottom: 3 }}>{value?.name || ''}</p>
                             <div style={{ display: 'flex' }}>
-                              <p style={{ paddingLeft: 10, fontWeight: 'bold', marginBottom: 0, color: colorMethod(value?.method) }}>{value?.method || ''}</p>
+                              <p style={{ paddingLeft: 10, fontWeight: 'bold', marginBottom: 0, color: colorMethod(value?.method as string) }}>{value?.method || ''}</p>
                               <p style={{ paddingLeft: 10, marginBottom: 0, color: grey[5] }}>{value?.apiPath || ''}</p>
                             </div>
                           </Tooltip>

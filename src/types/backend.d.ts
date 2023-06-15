@@ -116,11 +116,10 @@ export interface IResume {
 
 export interface IPermission {
     _id?: string;
-    name: string;
-    apiPath: string;
-    method: string;
-    module: string;
-    isSelected?: boolean;
+    name?: string;
+    apiPath?: string;
+    method?: string;
+    module?: string;
 
     createdBy?: string;
     isDeleted?: boolean;
@@ -135,7 +134,7 @@ export interface IRole {
     name: string;
     description: string;
     isActive: boolean;
-    permissions: IPermission[];
+    permissions: IPermission[] | string[];
 
     createdBy?: string;
     isDeleted?: boolean;

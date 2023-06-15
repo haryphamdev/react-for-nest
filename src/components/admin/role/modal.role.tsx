@@ -34,10 +34,6 @@ const ModalRole = (props: IProps) => {
                 const result = _(res.data?.result)
                     .groupBy(x => x.module)
                     .map((value, key) => {
-                        value = value.map(item => {
-                            item.isSelected = false;
-                            return item;
-                        });
                         return { module: key, permissions: value };
                     })
                     .value();
@@ -48,28 +44,38 @@ const ModalRole = (props: IProps) => {
     }, [])
 
     const submitRole = async (valuesForm: any) => {
-        const { name, description, isActive, permissions } = valuesForm;
-        if (dataInit?._id) {
-            //update
-            const role = {
-                name, description, isActive, permissions
-            }
+        const { description, isActive, name, permissions } = valuesForm;
+        const checkedPermissions = [];
 
-            const res = await callUpdateRole(role, dataInit._id);
-            if (res.data) {
-                message.success("Cập nhật role thành công");
-                handleReset();
-                reloadTable();
-            } else {
-                notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
-                });
+        if (permissions) {
+            for (const key in permissions) {
+                if (key.match(/^[0-9a-fA-F]{24}$/) && permissions[key] === true) {
+                    checkedPermissions.push(key);
+                }
             }
+        }
+
+        if (dataInit?._id) {
+            // //update
+            // const role = {
+            //     name, description, isActive, permissions
+            // }
+
+            // const res = await callUpdateRole(role, dataInit._id);
+            // if (res.data) {
+            //     message.success("Cập nhật role thành công");
+            //     handleReset();
+            //     reloadTable();
+            // } else {
+            //     notification.error({
+            //         message: 'Có lỗi xảy ra',
+            //         description: res.message
+            //     });
+            // }
         } else {
             //create
             const role = {
-                name, description, isActive, permissions
+                name, description, isActive, permissions: checkedPermissions
             }
             const res = await callCreateRole(role);
             if (res.data) {
@@ -167,7 +173,7 @@ const ModalRole = (props: IProps) => {
                         >
                             <ModuleApi
                                 // onChange={onChangeModuleApi}
-                                initData={(dataInit?.permissions)}
+                                initData={(dataInit?.permissions) as IPermission[]}
                                 form={form}
                                 listPermissions={listPermissions}
                             />

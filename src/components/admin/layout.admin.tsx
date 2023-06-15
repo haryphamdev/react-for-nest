@@ -38,7 +38,6 @@ const LayoutAdmin = () => {
 
     useEffect(() => {
         setActiveMenu(location.pathname)
-        console.log(">>> location. pathname", location.pathname)
     }, [location])
 
     const handleLogout = async () => {
