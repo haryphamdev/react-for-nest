@@ -2,7 +2,7 @@ import { ModalForm, ProForm, ProFormDigit, ProFormSelect, ProFormText } from "@a
 import { Col, Form, Row, message, notification } from "antd";
 import { isMobile } from 'react-device-detect';
 import { useState, useEffect } from "react";
-import { callCreateUser, callFetchCompany, callUpdateUser } from "@/config/api";
+import { callCreateUser, callFetchCompany, callFetchRole, callUpdateUser } from "@/config/api";
 import { IUser } from "@/types/backend";
 import { DebounceSelect } from "./debouce.select";
 
@@ -23,6 +23,8 @@ export interface ICompanySelect {
 const ModalUser = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
     const [companies, setCompanies] = useState<ICompanySelect[]>([]);
+    const [roles, setRoles] = useState<ICompanySelect[]>([]);
+
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -34,8 +36,18 @@ const ModalUser = (props: IProps) => {
                     key: dataInit.company._id,
                 }])
             }
+            if (dataInit.role) {
+                setRoles([
+                    {
+                        label: dataInit.role?.name,
+                        value: dataInit.role?._id,
+                        key: dataInit.role?._id,
+                    }
+                ])
+            }
         }
-    }, [dataInit])
+    }, [dataInit]);
+
     const submitUser = async (valuesForm: any) => {
         const { name, email, password, address, age, gender, role, company } = valuesForm;
         if (dataInit?._id) {
@@ -48,7 +60,7 @@ const ModalUser = (props: IProps) => {
                 age,
                 gender,
                 address,
-                role,
+                role: role.value,
                 company: {
                     _id: company.value,
                     name: company.label
@@ -75,7 +87,7 @@ const ModalUser = (props: IProps) => {
                 age,
                 gender,
                 address,
-                role,
+                role: role.value,
                 company: {
                     _id: company.value,
                     name: company.label
@@ -98,13 +110,28 @@ const ModalUser = (props: IProps) => {
     const handleReset = async () => {
         form.resetFields();
         setDataInit(null);
-        setCompanies([])
+        setCompanies([]);
+        setRoles([]);
         setOpenModal(false);
     }
 
     // Usage of DebounceSelect
     async function fetchCompanyList(name: string): Promise<ICompanySelect[]> {
         const res = await callFetchCompany(`current=1&pageSize=100&name=/${name}/i`);
+        if (res && res.data) {
+            const list = res.data.result;
+            const temp = list.map(item => {
+                return {
+                    label: item.name as string,
+                    value: item._id as string
+                }
+            })
+            return temp;
+        } else return [];
+    }
+
+    async function fetchRoleList(name: string): Promise<ICompanySelect[]> {
+        const res = await callFetchRole(`current=1&pageSize=100&name=/${name}/i`);
         if (res && res.data) {
             const list = res.data.result;
             const temp = list.map(item => {
@@ -180,26 +207,37 @@ const ModalUser = (props: IProps) => {
                             name="gender"
                             label="Giới Tính"
                             valueEnum={{
-                                male: 'Nam',
-                                female: 'Nữ',
-                                other: 'Khác',
+                                MALE: 'Nam',
+                                FEMALE: 'Nữ',
+                                OTHER: 'Khác',
                             }}
                             placeholder="Please select a gender"
                             rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
-                        <ProFormSelect
+                        <ProForm.Item
                             name="role"
                             label="Vai trò"
-                            valueEnum={{
-                                ADMIN: 'ADMIN',
-                                HR: 'HR',
-                                USER: 'USER',
-                            }}
-                            placeholder="Please select a role"
                             rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
-                        />
+
+                        >
+                            <DebounceSelect
+                                allowClear
+                                showSearch
+                                defaultValue={roles}
+                                value={roles}
+                                placeholder="Chọn công vai trò"
+                                fetchOptions={fetchRoleList}
+                                onChange={(newValue: any) => {
+                                    if (newValue?.length === 0 || newValue?.length === 1) {
+                                        setRoles(newValue as ICompanySelect[]);
+                                    }
+                                }}
+                                style={{ width: '100%' }}
+                            />
+                        </ProForm.Item>
+
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProForm.Item

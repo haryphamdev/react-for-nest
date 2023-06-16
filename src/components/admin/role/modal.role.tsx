@@ -50,7 +50,7 @@ const ModalRole = (props: IProps) => {
     }, [])
 
     useEffect(() => {
-        if (listPermissions?.length && singleRole?.permissions?.length && singleRole?._id) {
+        if (listPermissions?.length && singleRole?._id) {
             form.setFieldsValue({
                 name: singleRole.name,
                 isActive: singleRole.isActive,

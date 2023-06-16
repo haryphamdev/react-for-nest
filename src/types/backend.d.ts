@@ -50,7 +50,11 @@ export interface IUser {
     age: number;
     gender: string;
     address: string;
-    role?: string;
+    role?: {
+        _id: string;
+        name: string;
+    }
+
     company?: {
         _id: string;
         name: string;
