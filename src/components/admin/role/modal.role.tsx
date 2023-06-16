@@ -1,25 +1,28 @@
-import { FooterToolbar, ModalForm, ProCard, ProFormSelect, ProFormSwitch, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
+import { FooterToolbar, ModalForm, ProCard, ProFormSwitch, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
 import { Col, Form, Row, message, notification } from "antd";
 import { isMobile } from 'react-device-detect';
 import { callCreateRole, callFetchPermission, callUpdateRole } from "@/config/api";
-import { IPermission, IRole } from "@/types/backend";
+import { IPermission } from "@/types/backend";
 import { CheckSquareOutlined } from "@ant-design/icons";
 import ModuleApi from "./module.api";
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { resetSingleRole } from "@/redux/slice/roleSlide";
 
 interface IProps {
     openModal: boolean;
     setOpenModal: (v: boolean) => void;
-    dataInit?: IRole | null;
-    setDataInit: (v: any) => void;
     reloadTable: () => void;
 }
 
 
 
 const ModalRole = (props: IProps) => {
-    const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
+    const { openModal, setOpenModal, reloadTable } = props;
+    const singleRole = useAppSelector(state => state.role.singleRole);
+    const dispatch = useAppDispatch();
+
     const [form] = Form.useForm();
 
     const [listPermissions, setListPermissions] = useState<{
@@ -27,21 +30,52 @@ const ModalRole = (props: IProps) => {
         permissions: IPermission[]
     }[] | null>(null);
 
+    const groupByPermission = (data: any) => {
+        return _(data)
+            .groupBy(x => x.module)
+            .map((value, key) => {
+                return { module: key, permissions: value as IPermission[] };
+            })
+            .value();
+    }
+
     useEffect(() => {
         const init = async () => {
             const res = await callFetchPermission(`current=1&pageSize=100`);
             if (res.data?.result) {
-                const result = _(res.data?.result)
-                    .groupBy(x => x.module)
-                    .map((value, key) => {
-                        return { module: key, permissions: value };
-                    })
-                    .value();
-                setListPermissions(result)
+                setListPermissions(groupByPermission(res.data?.result))
             }
         }
         init();
     }, [])
+
+    useEffect(() => {
+        if (listPermissions?.length && singleRole?.permissions?.length && singleRole?._id) {
+            form.setFieldsValue({
+                name: singleRole.name,
+                isActive: singleRole.isActive,
+                description: singleRole.description
+            })
+            const userPermissions = groupByPermission(singleRole.permissions);
+
+            listPermissions.forEach(x => {
+                let allCheck = true;
+                x.permissions?.forEach(y => {
+                    const temp = userPermissions.find(z => z.module === x.module);
+
+                    if (temp) {
+                        const isExist = temp.permissions.find(k => k._id === y._id);
+                        if (isExist) {
+                            form.setFieldValue(["permissions", y._id as string], true);
+                        } else allCheck = false;
+                    } else {
+                        allCheck = false;
+                    }
+                })
+                form.setFieldValue(["permissions", x.module], allCheck)
+            })
+        }
+    }, [listPermissions, singleRole])
 
     const submitRole = async (valuesForm: any) => {
         const { description, isActive, name, permissions } = valuesForm;
@@ -55,23 +89,22 @@ const ModalRole = (props: IProps) => {
             }
         }
 
-        if (dataInit?._id) {
-            // //update
-            // const role = {
-            //     name, description, isActive, permissions
-            // }
-
-            // const res = await callUpdateRole(role, dataInit._id);
-            // if (res.data) {
-            //     message.success("Cập nhật role thành công");
-            //     handleReset();
-            //     reloadTable();
-            // } else {
-            //     notification.error({
-            //         message: 'Có lỗi xảy ra',
-            //         description: res.message
-            //     });
-            // }
+        if (singleRole?._id) {
+            //update
+            const role = {
+                name, description, isActive, permissions: checkedPermissions
+            }
+            const res = await callUpdateRole(role, singleRole._id);
+            if (res.data) {
+                message.success("Cập nhật role thành công");
+                handleReset();
+                reloadTable();
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
         } else {
             //create
             const role = {
@@ -93,14 +126,14 @@ const ModalRole = (props: IProps) => {
 
     const handleReset = async () => {
         form.resetFields();
-        setDataInit(null);
         setOpenModal(false);
+        dispatch(resetSingleRole({}));
     }
 
     return (
         <>
             <ModalForm
-                title={<>{dataInit?._id ? "Cập nhật Role" : "Tạo mới Role"}</>}
+                title={<>{singleRole?._id ? "Cập nhật Role" : "Tạo mới Role"}</>}
                 open={openModal}
                 modalProps={{
                     onCancel: () => { handleReset() },
@@ -109,12 +142,12 @@ const ModalRole = (props: IProps) => {
                     width: isMobile ? "100%" : 900,
                     keyboard: false,
                     maskClosable: false,
+
                 }}
                 scrollToFirstError={true}
                 preserve={false}
                 form={form}
                 onFinish={submitRole}
-                initialValues={dataInit?._id ? dataInit : {}}
                 submitter={{
                     render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
                     submitButtonProps: {
@@ -122,7 +155,7 @@ const ModalRole = (props: IProps) => {
                     },
                     searchConfig: {
                         resetText: "Hủy",
-                        submitText: <>{dataInit?._id ? "Cập nhật" : "Tạo mới"}</>,
+                        submitText: <>{singleRole?._id ? "Cập nhật" : "Tạo mới"}</>,
                     }
                 }}
             >
@@ -172,8 +205,6 @@ const ModalRole = (props: IProps) => {
                             bordered
                         >
                             <ModuleApi
-                                // onChange={onChangeModuleApi}
-                                initData={(dataInit?.permissions) as IPermission[]}
                                 form={form}
                                 listPermissions={listPermissions}
                             />

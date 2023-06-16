@@ -1,20 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
 import { Card, Col, Collapse, Row, Tooltip } from 'antd';
-import ProForm, { ModalForm, ProFormDigit, ProFormSelect, ProFormSwitch, ProFormText } from '@ant-design/pro-form';
-import _, { result } from "lodash";
+import { ProFormSwitch } from '@ant-design/pro-form';
 import { grey } from '@ant-design/colors';
-import { CheckCircleOutlined, CloseCircleOutlined, ControlOutlined, MacCommandOutlined } from '@ant-design/icons';
 import { colorMethod } from '@/config/utils';
 import { IPermission } from '@/types/backend';
-import { callFetchPermission } from '@/config/api';
 import 'styles/reset.scss';
 import type { ProFormInstance } from '@ant-design/pro-form';
-
 
 const { Panel } = Collapse;
 
 interface IProps {
-  initData: IPermission[] | undefined;
   onChange?: (data: any[]) => void;
   onReset?: () => void;
   form: ProFormInstance;
@@ -27,15 +21,6 @@ interface IProps {
 
 const ModuleApi = (props: IProps) => {
   const { form, listPermissions } = props;
-  const [collapseOpen, setCollapseOpen] = useState<any[] | any>([])
-
-  useEffect(() => {
-    if (listPermissions && listPermissions?.length) {
-      listPermissions.forEach(item => {
-        // form.setFieldValue("abc", item.)
-      })
-    }
-  }, [listPermissions])
 
   const handleSwitchAll = (value: boolean, name: string) => {
     const child = listPermissions?.find(item => item.module === name);
@@ -55,7 +40,7 @@ const ModuleApi = (props: IProps) => {
     if (temp) {
       const restPermission = temp?.permissions?.filter(item => item._id !== child);
       if (restPermission && restPermission.length) {
-        const allTrue = restPermission.every(item => form.getFieldValue((item._id) as string));
+        const allTrue = restPermission.every(item => form.getFieldValue(["permissions", item._id as string]));
         form.setFieldValue(["permissions", parent], allTrue && value)
       }
     }
@@ -64,17 +49,15 @@ const ModuleApi = (props: IProps) => {
 
   return (
     <Card size="small" bordered={false}>
-      <Collapse
-        onChange={setCollapseOpen}
-      >
+      <Collapse>
         {
           listPermissions?.map((item, index) => (
             <Panel
               header={<div>{item.module}</div>}
               key={index}
-
+              forceRender //force to render form item (with collapse mode)
               extra={
-                <div className={'customize-form-item'} hidden={!_.includes(collapseOpen, index + "")}>
+                <div className={'customize-form-item'}>
                   <ProFormSwitch
                     name={["permissions", item.module]}
                     fieldProps={{

@@ -8,15 +8,11 @@ import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import { callDeleteRole } from "@/config/api";
 import queryString from 'query-string';
-import ViewDetailPermission from "@/components/admin/permission/view.permission";
-import ModalPermission from "@/components/admin/permission/modal.permission";
-import { fetchRole } from "@/redux/slice/roleSlide";
+import { fetchRole, fetchRoleById } from "@/redux/slice/roleSlide";
 import ModalRole from "@/components/admin/role/modal.role";
 
 const RolePage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
-    const [dataInit, setDataInit] = useState<IRole | null>(null);
-    const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
     const tableRef = useRef<ActionType>();
 
@@ -51,12 +47,9 @@ const RolePage = () => {
             width: 250,
             render: (text, record, index, action) => {
                 return (
-                    <a href="#" onClick={() => {
-                        setOpenViewDetail(true);
-                        setDataInit(record);
-                    }}>
+                    <span>
                         {record._id}
-                    </a>
+                    </span>
                 )
             },
             hideInSearch: true,
@@ -116,8 +109,8 @@ const RolePage = () => {
                         }}
                         type=""
                         onClick={() => {
+                            dispatch(fetchRoleById((entity._id) as string))
                             setOpenModal(true);
-                            setDataInit(entity);
                         }}
                     />
 
@@ -211,16 +204,7 @@ const RolePage = () => {
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
-                dataInit={dataInit}
-                setDataInit={setDataInit}
             />
-            {/*
-            <ViewDetailPermission
-                onClose={setOpenViewDetail}
-                open={openViewDetail}
-                dataInit={dataInit}
-                setDataInit={setDataInit}
-            /> */}
         </div>
     )
 }
