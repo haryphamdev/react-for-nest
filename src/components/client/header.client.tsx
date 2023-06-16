@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CodeOutlined, LogoutOutlined, MenuFoldOutlined, RiseOutlined, TwitterOutlined } from '@ant-design/icons';
+import { CodeOutlined, ContactsOutlined, LogoutOutlined, MenuFoldOutlined, RiseOutlined, TwitterOutlined } from '@ant-design/icons';
 import { Avatar, Drawer, Dropdown, MenuProps, Space, message } from 'antd';
 import { Menu, ConfigProvider } from 'antd';
 import styles from '@/styles/client.module.scss';
@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { callLogout } from '@/config/api';
 import { setLogoutAction } from '@/redux/slice/accountSlide';
+import ManageAccount from './modal/manage.account';
 
 const Header = (props: any) => {
     const navigate = useNavigate();
@@ -21,6 +22,8 @@ const Header = (props: any) => {
 
     const [current, setCurrent] = useState('home');
     const location = useLocation();
+
+    const [openMangeAccount, setOpenManageAccount] = useState<boolean>(false);
 
     useEffect(() => {
         setCurrent(location.pathname);
@@ -60,6 +63,14 @@ const Header = (props: any) => {
     }
 
     const itemsDropdown = [
+        {
+            label: <label
+                style={{ cursor: 'pointer' }}
+                onClick={() => setOpenManageAccount(true)}
+            >Quản lý tài khoản</label>,
+            key: 'manage-account',
+            icon: <ContactsOutlined />
+        },
         {
             label: <label
                 style={{ cursor: 'pointer' }}
@@ -135,6 +146,10 @@ const Header = (props: any) => {
                     items={itemsMobiles}
                 />
             </Drawer>
+            <ManageAccount
+                open={openMangeAccount}
+                onClose={setOpenManageAccount}
+            />
         </>
     )
 };
