@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from '@/config/axios-customize';
 import { callFetchAccount } from '@/config/api';
 
 // First, create the thunk
@@ -11,18 +10,46 @@ export const fetchAccount = createAsyncThunk(
     }
 )
 
-const initialState = {
+interface IState {
+    isAuthenticated: boolean;
+    isLoading: boolean;
+    isRefreshToken: boolean;
+    errorRefreshToken: string;
+    user: {
+        _id: string;
+        email: string;
+        name: string;
+        role: {
+            _id: string;
+            name: string;
+        }
+        permissions: {
+            _id: string;
+            name: string;
+            apiPath: string;
+            method: string;
+            module: string;
+        }[]
+    };
+    activeMenu: string;
+}
+
+const initialState: IState = {
     isAuthenticated: false,
     isLoading: true,
     isRefreshToken: false,
     errorRefreshToken: "",
     user: {
+        _id: "",
         email: "",
         name: "",
-        phone: "",
-        _id: "",
-        role: "ADMIN",
+        role: {
+            _id: "",
+            name: "",
+        },
+        permissions: [],
     },
+
     activeMenu: 'home'
 };
 
@@ -39,20 +66,24 @@ export const accountSlide = createSlice({
         setUserLoginInfo: (state, action) => {
             state.isAuthenticated = true;
             state.isLoading = false;
-            state.user = {
-                ...state.user,
-                ...action.payload
-            }
+            state.user._id = action?.payload?._id;
+            state.user.email = action.payload.email;
+            state.user.name = action.payload.name;
+            state.user.role = action?.payload?.role;
+            state.user.permissions = action?.payload?.permissions;
         },
         setLogoutAction: (state, action) => {
             localStorage.removeItem('access_token');
             state.isAuthenticated = false;
             state.user = {
-                email: "",
-                phone: "",
                 _id: "",
-                role: "",
-                name: ""
+                email: "",
+                name: "",
+                role: {
+                    _id: "",
+                    name: "",
+                },
+                permissions: [],
             }
         },
         setRefreshTokenAction: (state, action) => {
@@ -74,7 +105,11 @@ export const accountSlide = createSlice({
             if (action.payload) {
                 state.isAuthenticated = true;
                 state.isLoading = false;
-                state.user = { ...state.user, ...action?.payload?.user }
+                state.user._id = action?.payload?.user?._id;
+                state.user.email = action.payload.user?.email;
+                state.user.name = action.payload.user?.name;
+                state.user.role = action?.payload?.user?.role;
+                state.user.permissions = action?.payload?.user?.permissions;
             }
         })
 

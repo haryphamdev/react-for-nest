@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Result } from "antd";
+import { useAppSelector } from '@/redux/hooks';
+import { FaSlidersH } from 'react-icons/fa';
 
 interface IProps {
     hideChildren?: boolean;
     children: React.ReactNode;
-    permission: { method: string, path: string };
+    permission: { method: string, apiPath: string, module: string };
 }
 
 function getPathFromUrl(url: string) {
@@ -26,33 +28,23 @@ const Access = (props: IProps) => {
     const [allow, setAllow] = useState<boolean>(false);
 
     //add ref: => only setAllow once
-    const isCheckRef = useRef(true)
-
-
-
+    const isCheckRef = useRef(true);
+    const permissions = useAppSelector(state => state.account.user.permissions);
 
     useEffect(() => {
-        // if (auth && auth.apis && userInfo && !userInfo.isSuperAdmin && isCheckRef.current) {
-        //     const apis = auth.apis;
-        //     if (apis && apis.length > 0) {
-        //         let x = false;
-        //         const check = apis.find(item => {
-        //             // return item.method === permission?.method && permission?.path?.startsWith(item.path)
-        //             return item.method === permission?.method && permission.path === item.path
-
-        //         })
-        //         if (check) x = true;
-
-        //         setAllow(x);
-        //         isCheckRef.current = false;
-        //     }
-        // }
-
-        // if (userInfo?.isSuperAdmin && isCheckRef.current) {
-        //     setAllow(true)
-        //     isCheckRef.current = false;
-        // }
-    }, [])
+        if (permissions.length && isCheckRef.current) {
+            const check = permissions.find(item =>
+                item.apiPath === permission.apiPath
+                && item.method === permission.method
+                && item.module === permission.module
+            )
+            if (check) {
+                setAllow(true)
+            } else
+                setAllow(false);
+            isCheckRef.current = false;
+        }
+    }, [permissions])
 
     return (
         <>
@@ -60,7 +52,7 @@ const Access = (props: IProps) => {
                 <>{props.children}</>
                 :
                 <>
-                    {hideChildren === false ?
+                    {hideChildren === false && isCheckRef.current === false ?
                         <Result
                             status="403"
                             title="Truy cập bị từ chối"
