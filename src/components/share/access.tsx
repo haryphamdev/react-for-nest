@@ -29,6 +29,7 @@ const Access = (props: IProps) => {
 
     const permissions = useAppSelector(state => state.account.user.permissions);
 
+
     useEffect(() => {
         if (permissions.length) {
             const check = permissions.find(item =>
