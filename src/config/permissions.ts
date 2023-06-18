@@ -36,3 +36,15 @@ export const ALL_PERMISSIONS = {
         DELETE: { method: "DELETE", apiPath: '/api/v1/users/:id', module: "USERS" },
     },
 }
+
+export const ALL_MODULES = {
+    AUTH: 'AUTH',
+    COMPANIES: 'COMPANIES',
+    FILES: 'FILES',
+    JOBS: 'JOBS',
+    PERMISSIONS: 'PERMISSIONS',
+    RESUMES: 'RESUMES',
+    ROLES: 'ROLES',
+    USERS: 'USERS',
+    SUBSCRIBERS: 'SUBSCRIBERS'
+}

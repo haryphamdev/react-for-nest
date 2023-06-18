@@ -3,6 +3,7 @@ import { Col, Form, Row, message, notification } from "antd";
 import { isMobile } from 'react-device-detect';
 import { callCreatePermission, callUpdatePermission } from "@/config/api";
 import { IPermission } from "@/types/backend";
+import { ALL_MODULES } from "@/config/permissions";
 
 interface IProps {
     openModal: boolean;
@@ -127,16 +128,7 @@ const ModalPermission = (props: IProps) => {
                         <ProFormSelect
                             name="module"
                             label="Thuộc Module"
-                            valueEnum={{
-                                AUTH: 'AUTH',
-                                COMPANIES: 'COMPANIES',
-                                FILES: 'FILES',
-                                JOBS: 'JOBS',
-                                PERMISSIONS: 'PERMISSIONS',
-                                RESUMES: 'RESUMES',
-                                ROLES: 'ROLES',
-                                USERS: 'USERS'
-                            }}
+                            valueEnum={ALL_MODULES}
                             placeholder="Please select a module"
                             rules={[{ required: true, message: 'Vui lòng chọn module!' }]}
                         />
