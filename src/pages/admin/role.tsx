@@ -10,6 +10,8 @@ import { callDeleteRole } from "@/config/api";
 import queryString from 'query-string';
 import { fetchRole, fetchRoleById } from "@/redux/slice/roleSlide";
 import ModalRole from "@/components/admin/role/modal.role";
+import { ALL_PERMISSIONS } from "@/config/permissions";
+import Access from "@/components/share/access";
 
 const RolePage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -102,35 +104,44 @@ const RolePage = () => {
             width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    <EditOutlined
-                        style={{
-                            fontSize: 20,
-                            color: '#ffa500',
-                        }}
-                        type=""
-                        onClick={() => {
-                            dispatch(fetchRoleById((entity._id) as string))
-                            setOpenModal(true);
-                        }}
-                    />
-
-                    <Popconfirm
-                        placement="leftTop"
-                        title={"Xác nhận xóa role"}
-                        description={"Bạn có chắc chắn muốn xóa role này ?"}
-                        onConfirm={() => handleDeleteRole(entity._id)}
-                        okText="Xác nhận"
-                        cancelText="Hủy"
+                    <Access
+                        permission={ALL_PERMISSIONS.ROLES.UPDATE}
+                        hideChildren
                     >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }}
-                            />
-                        </span>
-                    </Popconfirm>
+                        <EditOutlined
+                            style={{
+                                fontSize: 20,
+                                color: '#ffa500',
+                            }}
+                            type=""
+                            onClick={() => {
+                                dispatch(fetchRoleById((entity._id) as string))
+                                setOpenModal(true);
+                            }}
+                        />
+                    </Access>
+                    <Access
+                        permission={ALL_PERMISSIONS.ROLES.DELETE}
+                        hideChildren
+                    >
+                        <Popconfirm
+                            placement="leftTop"
+                            title={"Xác nhận xóa role"}
+                            description={"Bạn có chắc chắn muốn xóa role này ?"}
+                            onConfirm={() => handleDeleteRole(entity._id)}
+                            okText="Xác nhận"
+                            cancelText="Hủy"
+                        >
+                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
+                                <DeleteOutlined
+                                    style={{
+                                        fontSize: 20,
+                                        color: '#ff4d4f',
+                                    }}
+                                />
+                            </span>
+                        </Popconfirm>
+                    </Access>
                 </Space>
             ),
 
@@ -166,40 +177,44 @@ const RolePage = () => {
 
     return (
         <div>
-            <DataTable<IRole>
-                actionRef={tableRef}
-                headerTitle="Danh sách Roles (Vai Trò)"
-                rowKey="_id"
-                loading={isFetching}
-                columns={columns}
-                dataSource={roles}
-                request={async (params, sort, filter): Promise<any> => {
-                    const query = buildQuery(params, sort, filter);
-                    dispatch(fetchRole({ query }))
-                }}
-                scroll={{ x: true }}
-                pagination={
-                    {
-                        current: meta.current,
-                        pageSize: meta.pageSize,
-                        showSizeChanger: true,
-                        total: meta.total,
-                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+            <Access
+                permission={ALL_PERMISSIONS.ROLES.GET_PAGINATE}
+            >
+                <DataTable<IRole>
+                    actionRef={tableRef}
+                    headerTitle="Danh sách Roles (Vai Trò)"
+                    rowKey="_id"
+                    loading={isFetching}
+                    columns={columns}
+                    dataSource={roles}
+                    request={async (params, sort, filter): Promise<any> => {
+                        const query = buildQuery(params, sort, filter);
+                        dispatch(fetchRole({ query }))
+                    }}
+                    scroll={{ x: true }}
+                    pagination={
+                        {
+                            current: meta.current,
+                            pageSize: meta.pageSize,
+                            showSizeChanger: true,
+                            total: meta.total,
+                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                        }
                     }
-                }
-                rowSelection={false}
-                toolBarRender={(_action, _rows): any => {
-                    return (
-                        <Button
-                            icon={<PlusOutlined />}
-                            type="primary"
-                            onClick={() => setOpenModal(true)}
-                        >
-                            Thêm mới
-                        </Button>
-                    );
-                }}
-            />
+                    rowSelection={false}
+                    toolBarRender={(_action, _rows): any => {
+                        return (
+                            <Button
+                                icon={<PlusOutlined />}
+                                type="primary"
+                                onClick={() => setOpenModal(true)}
+                            >
+                                Thêm mới
+                            </Button>
+                        );
+                    }}
+                />
+            </Access>
             <ModalRole
                 openModal={openModal}
                 setOpenModal={setOpenModal}

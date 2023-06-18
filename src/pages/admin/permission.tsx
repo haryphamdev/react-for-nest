@@ -12,6 +12,8 @@ import { fetchPermission } from "@/redux/slice/permissionSlide";
 import ViewDetailPermission from "@/components/admin/permission/view.permission";
 import ModalPermission from "@/components/admin/permission/modal.permission";
 import { colorMethod } from "@/config/utils";
+import Access from "@/components/share/access";
+import { ALL_PERMISSIONS } from "@/config/permissions";
 
 const PermissionPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
@@ -77,7 +79,7 @@ const PermissionPage = () => {
             sorter: true,
             render(dom, entity, index, action, schema) {
                 return (
-                    <p style={{ paddingLeft: 10, fontWeight: 'bold', marginBottom: 0, color: colorMethod(entity?.method) }}>{entity?.method || ''}</p>
+                    <p style={{ paddingLeft: 10, fontWeight: 'bold', marginBottom: 0, color: colorMethod(entity?.method as string) }}>{entity?.method || ''}</p>
                 )
             },
         },
@@ -117,35 +119,44 @@ const PermissionPage = () => {
             width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    <EditOutlined
-                        style={{
-                            fontSize: 20,
-                            color: '#ffa500',
-                        }}
-                        type=""
-                        onClick={() => {
-                            setOpenModal(true);
-                            setDataInit(entity);
-                        }}
-                    />
-
-                    <Popconfirm
-                        placement="leftTop"
-                        title={"Xác nhận xóa permission"}
-                        description={"Bạn có chắc chắn muốn xóa permission này ?"}
-                        onConfirm={() => handleDeletePermission(entity._id)}
-                        okText="Xác nhận"
-                        cancelText="Hủy"
+                    <Access
+                        permission={ALL_PERMISSIONS.PERMISSIONS.UPDATE}
+                        hideChildren
                     >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }}
-                            />
-                        </span>
-                    </Popconfirm>
+                        <EditOutlined
+                            style={{
+                                fontSize: 20,
+                                color: '#ffa500',
+                            }}
+                            type=""
+                            onClick={() => {
+                                setOpenModal(true);
+                                setDataInit(entity);
+                            }}
+                        />
+                    </Access>
+                    <Access
+                        permission={ALL_PERMISSIONS.PERMISSIONS.DELETE}
+                        hideChildren
+                    >
+                        <Popconfirm
+                            placement="leftTop"
+                            title={"Xác nhận xóa permission"}
+                            description={"Bạn có chắc chắn muốn xóa permission này ?"}
+                            onConfirm={() => handleDeletePermission(entity._id)}
+                            okText="Xác nhận"
+                            cancelText="Hủy"
+                        >
+                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
+                                <DeleteOutlined
+                                    style={{
+                                        fontSize: 20,
+                                        color: '#ff4d4f',
+                                    }}
+                                />
+                            </span>
+                        </Popconfirm>
+                    </Access>
                 </Space>
             ),
 
@@ -194,40 +205,44 @@ const PermissionPage = () => {
 
     return (
         <div>
-            <DataTable<IPermission>
-                actionRef={tableRef}
-                headerTitle="Danh sách Permissions (Quyền Hạn)"
-                rowKey="_id"
-                loading={isFetching}
-                columns={columns}
-                dataSource={permissions}
-                request={async (params, sort, filter): Promise<any> => {
-                    const query = buildQuery(params, sort, filter);
-                    dispatch(fetchPermission({ query }))
-                }}
-                scroll={{ x: true }}
-                pagination={
-                    {
-                        current: meta.current,
-                        pageSize: meta.pageSize,
-                        showSizeChanger: true,
-                        total: meta.total,
-                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+            <Access
+                permission={ALL_PERMISSIONS.PERMISSIONS.GET_PAGINATE}
+            >
+                <DataTable<IPermission>
+                    actionRef={tableRef}
+                    headerTitle="Danh sách Permissions (Quyền Hạn)"
+                    rowKey="_id"
+                    loading={isFetching}
+                    columns={columns}
+                    dataSource={permissions}
+                    request={async (params, sort, filter): Promise<any> => {
+                        const query = buildQuery(params, sort, filter);
+                        dispatch(fetchPermission({ query }))
+                    }}
+                    scroll={{ x: true }}
+                    pagination={
+                        {
+                            current: meta.current,
+                            pageSize: meta.pageSize,
+                            showSizeChanger: true,
+                            total: meta.total,
+                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                        }
                     }
-                }
-                rowSelection={false}
-                toolBarRender={(_action, _rows): any => {
-                    return (
-                        <Button
-                            icon={<PlusOutlined />}
-                            type="primary"
-                            onClick={() => setOpenModal(true)}
-                        >
-                            Thêm mới
-                        </Button>
-                    );
-                }}
-            />
+                    rowSelection={false}
+                    toolBarRender={(_action, _rows): any => {
+                        return (
+                            <Button
+                                icon={<PlusOutlined />}
+                                type="primary"
+                                onClick={() => setOpenModal(true)}
+                            >
+                                Thêm mới
+                            </Button>
+                        );
+                    }}
+                />
+            </Access>
             <ModalPermission
                 openModal={openModal}
                 setOpenModal={setOpenModal}

@@ -25,14 +25,12 @@ const Access = (props: IProps) => {
     //set default: hideChildren = false => vẫn render children
     // hideChildren = true => ko render children, ví dụ hide button (button này check quyền)
     const { permission, hideChildren = false } = props;
-    const [allow, setAllow] = useState<boolean>(false);
+    const [allow, setAllow] = useState<boolean>(true);
 
-    //add ref: => only setAllow once
-    const isCheckRef = useRef(true);
     const permissions = useAppSelector(state => state.account.user.permissions);
 
     useEffect(() => {
-        if (permissions.length && isCheckRef.current) {
+        if (permissions.length) {
             const check = permissions.find(item =>
                 item.apiPath === permission.apiPath
                 && item.method === permission.method
@@ -42,7 +40,6 @@ const Access = (props: IProps) => {
                 setAllow(true)
             } else
                 setAllow(false);
-            isCheckRef.current = false;
         }
     }, [permissions])
 
@@ -52,7 +49,7 @@ const Access = (props: IProps) => {
                 <>{props.children}</>
                 :
                 <>
-                    {hideChildren === false && isCheckRef.current === false ?
+                    {hideChildren === false ?
                         <Result
                             status="403"
                             title="Truy cập bị từ chối"

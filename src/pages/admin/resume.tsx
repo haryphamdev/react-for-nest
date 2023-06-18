@@ -11,6 +11,8 @@ import queryString from 'query-string';
 import { useNavigate } from "react-router-dom";
 import { fetchResume } from "@/redux/slice/resumeSlide";
 import ViewDetailResume from "@/components/admin/resume/view.resume";
+import { ALL_PERMISSIONS } from "@/config/permissions";
+import Access from "@/components/share/access";
 
 const ResumePage = () => {
     const tableRef = useRef<ActionType>();
@@ -190,34 +192,38 @@ const ResumePage = () => {
 
     return (
         <div>
-            <DataTable<IResume>
-                actionRef={tableRef}
-                headerTitle="Danh sách Resumes"
-                rowKey="_id"
-                loading={isFetching}
-                columns={columns}
-                dataSource={resumes}
-                request={async (params, sort, filter): Promise<any> => {
-                    const query = buildQuery(params, sort, filter);
-                    dispatch(fetchResume({ query }))
-                }}
-                scroll={{ x: true }}
-                pagination={
-                    {
-                        current: meta.current,
-                        pageSize: meta.pageSize,
-                        showSizeChanger: true,
-                        total: meta.total,
-                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+            <Access
+                permission={ALL_PERMISSIONS.RESUMES.GET_PAGINATE}
+            >
+                <DataTable<IResume>
+                    actionRef={tableRef}
+                    headerTitle="Danh sách Resumes"
+                    rowKey="_id"
+                    loading={isFetching}
+                    columns={columns}
+                    dataSource={resumes}
+                    request={async (params, sort, filter): Promise<any> => {
+                        const query = buildQuery(params, sort, filter);
+                        dispatch(fetchResume({ query }))
+                    }}
+                    scroll={{ x: true }}
+                    pagination={
+                        {
+                            current: meta.current,
+                            pageSize: meta.pageSize,
+                            showSizeChanger: true,
+                            total: meta.total,
+                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                        }
                     }
-                }
-                rowSelection={false}
-                toolBarRender={(_action, _rows): any => {
-                    return (
-                        <></>
-                    );
-                }}
-            />
+                    rowSelection={false}
+                    toolBarRender={(_action, _rows): any => {
+                        return (
+                            <></>
+                        );
+                    }}
+                />
+            </Access>
             <ViewDetailResume
                 open={openViewDetail}
                 onClose={setOpenViewDetail}
