@@ -1,4 +1,4 @@
-import { Modal, Table, Tabs } from "antd";
+import { Button, Col, Form, Modal, Row, Select, Table, Tabs } from "antd";
 import { isMobile } from "react-device-detect";
 import type { TabsProps } from 'antd';
 import { IResume } from "@/types/backend";
@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react';
 import { callFetchResumeByUser } from "@/config/api";
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
+import { MonitorOutlined } from "@ant-design/icons";
+import { SKILLS_LIST } from "@/config/utils";
 
 interface IProps {
     open: boolean;
@@ -98,6 +100,53 @@ const UserUpdateInfo = (props: any) => {
     )
 }
 
+const JobByEmail = (props: any) => {
+    const [form] = Form.useForm();
+
+    const onFinish = (values: any) => {
+        const { skills } = values;
+        console.log(">>> check values: ", skills)
+
+    }
+
+    return (
+        <>
+            <Form
+                onFinish={onFinish}
+                form={form}
+            >
+                <Row gutter={[20, 20]}>
+                    <Col span={24}>
+                        <Form.Item
+                            label={"Kỹ năng"}
+                            name={"skills"}
+                            rules={[{ required: true, message: 'Vui lòng chọn ít nhất 1 skill!' }]}
+
+                        >
+                            <Select
+                                mode="multiple"
+                                allowClear
+                                showArrow={false}
+                                style={{ width: '100%' }}
+                                placeholder={
+                                    <>
+                                        <MonitorOutlined /> Tìm theo kỹ năng...
+                                    </>
+                                }
+                                optionLabelProp="label"
+                                options={SKILLS_LIST}
+                            />
+                        </Form.Item>
+                    </Col>
+                    <Col span={24}>
+                        <Button onClick={() => form.submit()}>Cập nhật</Button>
+                    </Col>
+                </Row>
+            </Form>
+        </>
+    )
+}
+
 const ManageAccount = (props: IProps) => {
     const { open, onClose } = props;
 
@@ -111,7 +160,11 @@ const ManageAccount = (props: IProps) => {
             label: `Rải CV`,
             children: <UserResume />,
         },
-
+        {
+            key: 'email-by-skills',
+            label: `Nhận Jobs qua Email`,
+            children: <JobByEmail />,
+        },
         {
             key: 'user-update-info',
             label: `Cập nhật thông tin`,

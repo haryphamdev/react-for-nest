@@ -1,25 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Result } from "antd";
 import { useAppSelector } from '@/redux/hooks';
-import { FaSlidersH } from 'react-icons/fa';
-
 interface IProps {
     hideChildren?: boolean;
     children: React.ReactNode;
     permission: { method: string, apiPath: string, module: string };
 }
-
-function getPathFromUrl(url: string) {
-    return url.split(/[?#]/)[0];
-}
-
-export const API_LIST = {
-    APP_DETAIL: {
-        // method: API_URLS..g.method,
-        // path: getPathFromUrl()
-    },
-}
-
 
 const Access = (props: IProps) => {
     //set default: hideChildren = false => vẫn render children
@@ -28,7 +14,6 @@ const Access = (props: IProps) => {
     const [allow, setAllow] = useState<boolean>(true);
 
     const permissions = useAppSelector(state => state.account.user.permissions);
-
 
     useEffect(() => {
         if (permissions.length) {
