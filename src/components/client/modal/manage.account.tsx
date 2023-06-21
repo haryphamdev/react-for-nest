@@ -1,13 +1,14 @@
-import { Button, Col, Form, Modal, Row, Select, Table, Tabs } from "antd";
+import { Button, Col, Form, Modal, Row, Select, Table, Tabs, message, notification } from "antd";
 import { isMobile } from "react-device-detect";
 import type { TabsProps } from 'antd';
 import { IResume } from "@/types/backend";
 import { useState, useEffect } from 'react';
-import { callFetchResumeByUser } from "@/config/api";
+import { callFetchResumeByUser, callGetSubscriberSkills, callUpdateSubscriber } from "@/config/api";
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { MonitorOutlined } from "@ant-design/icons";
 import { SKILLS_LIST } from "@/config/utils";
+import { useAppSelector } from "@/redux/hooks";
 
 interface IProps {
     open: boolean;
@@ -102,10 +103,33 @@ const UserUpdateInfo = (props: any) => {
 
 const JobByEmail = (props: any) => {
     const [form] = Form.useForm();
+    const user = useAppSelector(state => state.account.user);
 
-    const onFinish = (values: any) => {
+    useEffect(() => {
+        const init = async () => {
+            const res = await callGetSubscriberSkills();
+            if (res && res.data) {
+                form.setFieldValue("skills", res.data.skills);
+            }
+        }
+        init();
+    }, [])
+
+    const onFinish = async (values: any) => {
         const { skills } = values;
-        console.log(">>> check values: ", skills)
+        const res = await callUpdateSubscriber({
+            email: user.email,
+            name: user.name,
+            skills: skills ? skills : []
+        });
+        if (res.data) {
+            message.success("Cập nhật thông tin thành công");
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: res.message
+            });
+        }
 
     }
 
