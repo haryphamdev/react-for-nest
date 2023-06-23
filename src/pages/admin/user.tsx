@@ -178,8 +178,6 @@ const UserPage = () => {
         }
         temp += "&populate=role&fields=role._id, role.name";
 
-        temp += "&populate=role&fields=role._id, role.name";
-
         return temp;
     }
 
