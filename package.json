@@ -47,5 +47,8 @@
     "sass": "1.62.1",
     "typescript": "5.3.3",
     "vite": "4.2.0"
+  },
+  "overrides": {
+    "dayjs": "1.11.8"
   }
 }
